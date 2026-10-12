@@ -293,3 +293,30 @@ the single source of truth — code annotations link here by anchor instead of d
   - `src/server/features/translate-document/wireTranslateRunner.ts` (turns a reported event into a callback)
   - `src/server/modules/task-runner/payload-jobs-runner/model/owedIfGaveUp.ts` (when a run has stopped for good)
   - `src/server/modules/lifecycle/types.ts` (`TranslationLifecycleCallbacks`)
+
+### runner-create-takes-the-context
+
+- **What:** `TaskRunnerProvider.create(payload, handler)` — the second argument.
+- **Status:** removed
+- **Changed:** 2026-10-12 / PR #177
+- **Replacement:** `create(payload, context)`, where `context` is the whole `TaskRunnerContext` —
+  the same object `configure` has always been handed. The handler is `context.handler`.
+- **Why:** a runner now tells the plugin what became of every assignment it accepted, through
+  `context.report`, so it needs the channel and not just the handler. `report` is required rather
+  than optional so that omitting it fails the build instead of leaving a host hearing nothing.
+- **Who this breaks:** only a `TaskRunner` implemented outside this package — `TaskRunnerProvider`
+  is exported from the barrel, so a runner written against 0.15.0 will not compile. A host that
+  merely configures the plugin sees no change: the callbacks, their arguments, the runner factories
+  and every HTTP response are as they were.
+- **Why it ships in a minor rather than a major:** the owner's call, taken on 2026-10-12 — the
+  package is pre-1.0 and a third-party runner is a surface nobody is known to have implemented yet.
+  It is recorded here rather than in the changelog because the project's commit-analyzer preset
+  (`angular`, the default, since `.releaserc.json` sets no `preset`) does not read the `!` marker in
+  a commit header at all, and the `BREAKING CHANGE:` footer it does read would force 1.0.0.
+- **Code refs:**
+  - `src/server/modules/task-runner/TaskRunnerProvider.interface.ts` (`create`, and `report` on the
+    context)
+  - `src/server/modules/task-runner/__tests__/TaskRunner.conformance.types.ts` (a complete outside
+    runner, compiled against the published barrel)
+  - `src/server/features/translate-document/wireTranslateRunner.ts` (the one place that builds a
+    context)
