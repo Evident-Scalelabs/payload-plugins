@@ -412,11 +412,16 @@ translatorPlugin({
     onQueued: (task) => log.info(task, 'translation queued'),
     onCompleted: (task) => log.info(task, 'translation done'),
     onFailed: (task, error) => log.error({ task, error }, 'translation failed'),
+    onCancelled: (task) => log.info(task, 'translation cancelled'),
   },
 })
 ```
 
-Each `task` carries `{ collection, id, sourceLng, targetLng, strategy }`. `onQueued` fires once; `onCompleted` / `onFailed` fire per execution attempt, so a retried task can emit `onFailed` more than once.
+Each `task` carries `{ collection, id, sourceLng, targetLng, strategy, handle }`. `handle` names the run translating that locale — the value the enqueue answer gave, and the one `DELETE /translate/cancel` takes back. _Since v0.16.0._
+
+Each callback fires at most once per target locale, never per attempt: `onQueued` when the runner takes the work, then one of `onCompleted`, `onFailed` or `onCancelled`. **`onFailed` means the locale will not be translated** — retries are the runner's own business and are not reported, so there is no need to disable them. _Since v0.16.0; `onFailed` previously fired on every failed attempt._
+
+Two notes on "at most once". A second request for a locale a live run already covers joins that run instead of starting another, so both requests see the same handle and one set of events. And a locale already being translated when its run is cancelled is announced `onCancelled` and may still finish as `onCompleted`.
 
 ## Provenance and staleness
 
