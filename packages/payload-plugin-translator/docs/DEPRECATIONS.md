@@ -54,8 +54,8 @@ the single source of truth — code annotations link here by anchor instead of d
 - **Code refs:**
   - `src/server/modules/task-runner/payload-jobs-runner/PayloadJobsRunnerProvider.ts` (inputSchema, handler input type/unpacking)
   - `src/server/modules/task-runner/payload-jobs-runner/PayloadJobsTaskRunner.ts` (enqueue write, `findByCollection` / `findRawJobs` query + in-memory filter)
-  - `src/server/modules/task-runner/payload-jobs-runner/normalizeJob.ts` (read fallback)
-  - `src/server/modules/task-runner/payload-jobs-runner/types.ts` (`PayloadJob.input` shape)
+  - `src/server/modules/task-runner/payload-jobs-runner/store/normalizeJob.ts` (read fallback)
+  - `src/server/modules/task-runner/payload-jobs-runner/store/types.ts` (`PayloadJob.input` shape)
 
 ### jobs-per-locale-task-shape
 
@@ -74,8 +74,8 @@ the single source of truth — code annotations link here by anchor instead of d
   strands those rows: cancel, stale-lock reclaim and the status panels stop finding them, silently.
 - **Code refs:**
   - `src/server/modules/task-runner/payload-jobs-runner/PayloadJobsTaskRunner.ts` (`ownJobs()`)
-  - `src/server/modules/task-runner/payload-jobs-runner/planEnqueue.ts` (`pickHost` skips it)
-  - `src/server/modules/task-runner/payload-jobs-runner/normalizeJob.ts` (`normalizeJobLocales`
+  - `src/server/modules/task-runner/payload-jobs-runner/model/planEnqueue.ts` (`pickHost` skips it)
+  - `src/server/modules/task-runner/payload-jobs-runner/store/normalizeJob.ts` (`normalizeJobLocales`
     expands it to itself)
 
 ### find-by-collection-document-ids-array
@@ -250,3 +250,73 @@ the single source of truth — code annotations link here by anchor instead of d
   - `src/core/translation-pipeline/translateContent.ts` (the single switch between the two paths)
   - `src/core/translation-pipeline/stages/text-expander/RichContainerExpander.ts`
   - `docs/plans/2026-09-08-richtext-container-granularity-design.md` (D8, D8a)
+
+### enqueue-void-return
+
+- **What:** `TaskRunner.enqueue` resolving with nothing.
+- **Status:** live
+- **Deprecated:** 2026-10-07 / PR pending (issues #107, #110)
+- **Replacement:** resolve with one assignment per requested locale — the shape `TaskRunnerProvider`
+  infers for `enqueue`; an implementation returns it as an object literal and needs no import.
+- **Remove in:** next major
+- **Why:** the handle is what every later message about the work is keyed by — `onCompleted`,
+  `onFailed`, `onCancelled`, the enqueue answer and the cancel route all name it. A runner that
+  answers with nothing leaves its host unable to connect any of them to the request it made.
+- **Why the return type widened instead of changing:** `enqueue` is implemented outside this
+  package. Narrowing it to `EnqueueAssignment[]` would break every third-party runner on upgrade,
+  and a pair of overloads cannot express the transition — an implementation must satisfy every
+  overload, so the old shape would stop compiling just the same.
+- **What a `void` runner loses today:** nothing throws and nothing is logged. The enqueue response
+  reports no handles, and the lifecycle callbacks arrive without one. Both degrade silently and on
+  purpose: the alternative is a warning on a path the host cannot fix from where it sees it.
+- **Code refs:**
+  - `src/server/modules/task-runner/TaskRunner.interface.ts` (the widened return)
+  - `src/server/modules/task-runner/__tests__/TaskRunner.conformance.types.ts` (a `void` runner
+    still compiles; narrowing the contract fails the build)
+  - `src/server/features/enqueue-translation/handler.ts` (the answer, when handles exist)
+
+### on-failed-per-attempt
+
+- **What:** `lifecycle.onFailed` firing once per execution attempt.
+- **Status:** removed (behaviour change, not an annotated symbol)
+- **Changed:** 2026-10-07 / PR pending (issue #110)
+- **Replacement:** `onFailed` fires once per target locale, and only when that locale will not be
+  translated. A runner that retries decides when that is and says so itself, by reporting the
+  `failed` event of `TaskRunnerContext.report`.
+- **Why this is listed although nothing was renamed:** a host counting `onFailed` calls, or treating
+  one as "this translation is dead", was reading a signal that did not mean that. Silently making it
+  mean that is the fix, but an install that disabled retries *because* of the old behaviour should
+  know it can turn them back on.
+- **What else moved with it:** a locale the run never reached is now reported too, with the error
+  that ended the run rather than one of its own — nothing ran for it to throw.
+- **Code refs:**
+  - `src/server/features/translate-document/wireTranslateRunner.ts` (turns a reported event into a callback)
+  - `src/server/modules/task-runner/payload-jobs-runner/model/owedIfGaveUp.ts` (when a run has stopped for good)
+  - `src/server/modules/lifecycle/types.ts` (`TranslationLifecycleCallbacks`)
+
+### runner-create-takes-the-context
+
+- **What:** `TaskRunnerProvider.create(payload, handler)` — the second argument.
+- **Status:** removed
+- **Changed:** 2026-10-12 / PR #177
+- **Replacement:** `create(payload, context)`, where `context` is the whole `TaskRunnerContext` —
+  the same object `configure` has always been handed. The handler is `context.handler`.
+- **Why:** a runner now tells the plugin what became of every assignment it accepted, through
+  `context.report`, so it needs the channel and not just the handler. `report` is required rather
+  than optional so that omitting it fails the build instead of leaving a host hearing nothing.
+- **Who this breaks:** only a `TaskRunner` implemented outside this package — `TaskRunnerProvider`
+  is exported from the barrel, so a runner written against 0.15.0 will not compile. A host that
+  merely configures the plugin sees no change: the callbacks, their arguments, the runner factories
+  and every HTTP response are as they were.
+- **Why it ships in a minor rather than a major:** the owner's call, taken on 2026-10-12 — the
+  package is pre-1.0 and a third-party runner is a surface nobody is known to have implemented yet.
+  It is recorded here rather than in the changelog because the project's commit-analyzer preset
+  (`angular`, the default, since `.releaserc.json` sets no `preset`) does not read the `!` marker in
+  a commit header at all, and the `BREAKING CHANGE:` footer it does read would force 1.0.0.
+- **Code refs:**
+  - `src/server/modules/task-runner/TaskRunnerProvider.interface.ts` (`create`, and `report` on the
+    context)
+  - `src/server/modules/task-runner/__tests__/TaskRunner.conformance.types.ts` (a complete outside
+    runner, compiled against the published barrel)
+  - `src/server/features/translate-document/wireTranslateRunner.ts` (the one place that builds a
+    context)
