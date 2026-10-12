@@ -1,7 +1,8 @@
 import type { Comment } from "../../types";
 import type { CommentsFilters } from "../../types/filters";
 
-function resolveId(value: number | { id: number }): number {
+function resolveId(value: number | { id: number } | null | undefined): number | null {
+  if (value == null) return null;
   return typeof value === "number" ? value : value.id;
 }
 
@@ -14,12 +15,10 @@ export function applyCommentFilters(
     if (!filters.showResolved && comment.isResolved) return false;
 
     if (filters.onlyMyThreads && userId !== null) {
-      const authorId = resolveId(comment.author as number | { id: number });
+      const authorId = resolveId(comment.author);
       if (authorId === userId) return true;
 
-      const mentionIds = (comment.mentions ?? []).map((m) =>
-        resolveId(m.user as number | { id: number })
-      );
+      const mentionIds = (comment.mentions ?? []).map((m) => resolveId(m.user));
 
       return mentionIds.includes(userId);
     }

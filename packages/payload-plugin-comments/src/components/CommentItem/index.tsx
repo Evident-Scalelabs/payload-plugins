@@ -34,14 +34,16 @@ export function CommentItem({ comment, currentUserId }: Props) {
   const mentionDeletedSuffix = t("comments:mentionDeletedSuffix" as never) ?? "(deleted)";
   const unknownLabel = t("comments:unknownAuthor" as never) ?? FALLBACK_USERNAME;
   const narrowedAuthor = typeof comment.author === "object" ? comment.author : null;
-  const authorName = resolveUsername(narrowedAuthor, usernameFieldPath, unknownLabel);
+  const authorName = comment.author
+    ? resolveUsername(narrowedAuthor, usernameFieldPath, unknownLabel)
+    : deletedUserLabel;
 
   const isResolved = comment.isResolved ?? false;
   const authorId =
     comment.author && typeof comment.author === "object" && "id" in comment.author
       ? comment.author.id
       : null;
-  const canDelete = currentUserId !== null && authorId === currentUserId;
+  const canDelete = currentUserId !== null && (authorId === currentUserId || !comment.author);
 
   const renderedText = renderCommentText({
     text: comment.text,
@@ -72,7 +74,7 @@ export function CommentItem({ comment, currentUserId }: Props) {
         <Avatar
           user={narrowedAuthor}
           usernameFieldPath={usernameFieldPath}
-          fallbackName={unknownLabel}
+          fallbackName={comment.author ? unknownLabel : deletedUserLabel}
         />
 
         <div className="flex-1 min-w-0">

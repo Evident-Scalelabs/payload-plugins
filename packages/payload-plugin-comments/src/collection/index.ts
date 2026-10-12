@@ -1,4 +1,4 @@
-import type { CollectionConfig, CollectionSlug } from "payload";
+import type { CollectionConfig, CollectionSlug, RelationshipFieldSingleValidation } from "payload";
 import { setAuthorBeforeCreate } from "./hooks/setAuthorBeforeCreate";
 import { setMentionSnapshotsBeforeChange } from "./hooks/setMentionSnapshotsBeforeChange";
 import { setTenantBeforeCreate } from "./hooks/setTenantBeforeCreate";
@@ -6,6 +6,9 @@ import { cascadeDeleteCommentReads } from "./hooks/cascadeDeleteCommentReads";
 import { DEFAULT_COLLECTION_SLUG } from "../constants";
 import type { TenantPluginConfig } from "../types";
 import { isAuth } from "./access/isAuth";
+
+const requireAuthorOnCreate: RelationshipFieldSingleValidation = (value, { operation }) =>
+  operation !== "create" || Boolean(value) || "This field is required.";
 
 export const baseCollection = (tenantConfig?: TenantPluginConfig): CollectionConfig => ({
   slug: DEFAULT_COLLECTION_SLUG,
@@ -110,8 +113,8 @@ export const baseCollection = (tenantConfig?: TenantPluginConfig): CollectionCon
       name: "author",
       type: "relationship",
       relationTo: "users",
-      required: true,
       label: "Author",
+      validate: requireAuthorOnCreate,
       admin: {
         position: "sidebar",
       },

@@ -17,6 +17,7 @@ export const REFETCH_INTERVAL = 15000;
 export const DRAWER_OPENING_TIME = 350;
 
 export const COMMENT_READS_COLLECTION_SLUG = "comment-reads";
+export const USERS_COLLECTION_SLUG = "users";
 export const UNREAD_COUNT_REFETCH_INTERVAL = 30000;
 export const READ_DWELL_MS = 600;
 export const READ_OBSERVER_THRESHOLD = 0.5;

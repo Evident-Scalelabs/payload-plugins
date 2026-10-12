@@ -16,7 +16,7 @@ export interface Comment {
   locale?: string | null;
   text: string;
   mentions?: CommentMention[] | null;
-  author: number | User;
+  author: number | User | null;
   isResolved: boolean;
   resolvedBy?: number | User | null;
   resolvedAt?: string | null;

@@ -1,5 +1,6 @@
 import type { CollectionAfterDeleteHook, CollectionConfig } from "payload";
-import { DEFAULT_COLLECTION_SLUG } from "../../constants";
+import { DEFAULT_COLLECTION_SLUG, USERS_COLLECTION_SLUG } from "../../constants";
+import { cascadeDeleteUserCommentReads } from "../../collection/hooks/cascadeDeleteUserCommentReads";
 import { injectFieldCommentComponents } from "./injectFieldCommentComponents";
 
 export function overrideCollections(collections?: CollectionConfig[]) {
@@ -12,6 +13,12 @@ export function overrideCollections(collections?: CollectionConfig[]) {
       ...patchedCollection,
       hooks: {
         ...patchedCollection.hooks,
+        ...(collection.slug === USERS_COLLECTION_SLUG && {
+          beforeDelete: [
+            ...(patchedCollection.hooks?.beforeDelete ?? []),
+            cascadeDeleteUserCommentReads,
+          ],
+        }),
         afterDelete: [
           ...(patchedCollection.hooks?.afterDelete ?? []),
           (async ({ doc, req }) => {
