@@ -1,3 +1,18 @@
+# @focus-reactive/payload-plugin-translator [0.16.0](https://github.com/focusreactive/payload-plugins/compare/@focus-reactive/payload-plugin-translator@0.15.0...@focus-reactive/payload-plugin-translator@0.16.0) (2026-10-12)
+
+
+### Bug Fixes
+
+* **translator:** a run that gave up owes a cancellation nothing ([dc4234d](https://github.com/focusreactive/payload-plugins/commit/dc4234dd661ff3f56ae83ca84ec1a964b698c7f8))
+
+
+### Features
+
+* **translator:** answer an enqueue with the runs it arranged ([d6d17d1](https://github.com/focusreactive/payload-plugins/commit/d6d17d1e0866f5dd52bab7f6bf74e9fdb1391239))
+* **translator:** carry the run's handle into the lifecycle callbacks ([4cd0134](https://github.com/focusreactive/payload-plugins/commit/4cd0134d9f513988ecdec3bc3f1ea2919fc21329))
+* **translator:** name the document and locale in the collection status ([44d5e3c](https://github.com/focusreactive/payload-plugins/commit/44d5e3cd2537a0c339675c76378928f474a01ae1))
+* **translator:** tell the host what a cancellation stops ([fff4668](https://github.com/focusreactive/payload-plugins/commit/fff4668248919fd3540cb131db1117ea6e8e4ba3))
+
 # @focus-reactive/payload-plugin-translator [0.15.0](https://github.com/focusreactive/payload-plugins/compare/@focus-reactive/payload-plugin-translator@0.14.0...@focus-reactive/payload-plugin-translator@0.15.0) (2026-10-05)
 
 
