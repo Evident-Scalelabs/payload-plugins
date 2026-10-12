@@ -1,3 +1,10 @@
+## @focus-reactive/payload-plugin-comments [1.11.3](https://github.com/focusreactive/payload-plugins/compare/@focus-reactive/payload-plugin-comments@1.11.2...@focus-reactive/payload-plugin-comments@1.11.3) (2026-10-12)
+
+
+### Bug Fixes
+
+* **comments:** keep comments of deleted users and allow deleting such users ([8dbf4f0](https://github.com/focusreactive/payload-plugins/commit/8dbf4f0e7c717ada051c1fb1e721a8ea532fcd8a))
+
 ## @focus-reactive/payload-plugin-comments [1.11.2](https://github.com/focusreactive/payload-plugins/compare/@focus-reactive/payload-plugin-comments@1.11.1...@focus-reactive/payload-plugin-comments@1.11.2) (2026-10-06)
 
 
