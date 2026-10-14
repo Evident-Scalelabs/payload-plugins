@@ -3,7 +3,10 @@
 import { ShimmerEffect } from "@payloadcms/ui";
 import { TrashIcon } from "@payloadcms/ui/icons/Trash";
 
-import type { GroupedCollectionTranslationStatus } from "../../../entities/translation/index.js";
+import type {
+  CollectionTranslationPanel,
+  ReportedStatus,
+} from "../../../entities/translation/index.js";
 import {
   ActionButton,
   DocumentTranslationStatus,
@@ -15,27 +18,39 @@ import styles from "./styles.module.scss";
 
 type CollectionTranslationProgressProps = {
   collection: string;
-  data: GroupedCollectionTranslationStatus | undefined;
+  data: CollectionTranslationPanel | undefined;
   isPending: boolean;
 };
 
-// Same colour + label vocabulary as the document status list (StatusBadge STATE_LABEL). Only the
-// actively-processing group pulses — Queued is waiting, not working, so it stays static.
 const ROWS: Array<{
-  key: DocumentTranslationStatus;
+  key: ReportedStatus;
   label: string;
   color: "blue" | "gray" | "green" | "red";
 }> = [
   { key: DocumentTranslationStatus.RUNNING, label: "Translating", color: "blue" },
   { key: DocumentTranslationStatus.PENDING, label: "Queued", color: "gray" },
-  { key: DocumentTranslationStatus.COMPLETED, label: "Translated", color: "green" },
   { key: DocumentTranslationStatus.FAILED, label: "Failed", color: "red" },
 ];
 
-/**
- * Collection status as a compact list of grouped counts — one `[dot] label … count` row per
- * non-zero group, mirroring the document popup's per-locale list rhythm (dot vocabulary shared).
- */
+const UNITS = [
+  { ms: 24 * 60 * 60 * 1000, one: "day", many: "days" },
+  { ms: 60 * 60 * 1000, one: "hour", many: "hours" },
+  { ms: 60 * 1000, one: "minute", many: "minutes" },
+] as const;
+
+/** Spelled in the units it divides into — "1 day 12 hours" rather than "36 hours". */
+const spanOf = (ms: number): string => {
+  const said: string[] = [];
+  let left = ms;
+  for (const unit of UNITS) {
+    const count = Math.floor(left / unit.ms);
+    if (count > 0) said.push(`${count} ${count === 1 ? unit.one : unit.many}`);
+    left -= count * unit.ms;
+  }
+  return said.length > 0 ? said.join(" ") : "under a minute";
+};
+
+/** What the collection is doing now, one row per non-zero count. */
 export function CollectionTranslationProgress({
   collection,
   data,
@@ -60,7 +75,7 @@ export function CollectionTranslationProgress({
   return (
     <ul className={styles["status-list"]}>
       {ROWS.map(({ key, label, color }) => {
-        const count = data[key].length;
+        const count = data.counts[key];
         if (count === 0) {
           return null;
         }
@@ -90,7 +105,9 @@ export function CollectionTranslationProgress({
             </div>
             {/* No per-doc error data in the grouped status API — point the user to where detail lives. */}
             {key === DocumentTranslationStatus.FAILED && (
-              <p className={styles.meta}>Open a document to see why</p>
+              <p className={styles.meta}>
+                Last {spanOf(data.failedWindowMs)} — open a document to see why
+              </p>
             )}
           </li>
         );

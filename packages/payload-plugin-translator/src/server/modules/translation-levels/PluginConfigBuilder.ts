@@ -3,11 +3,11 @@ import type { CollectionConfig, Config, Endpoint } from "payload";
 import type { AccessGuard } from "../../../types/AccessGuard.js";
 import type { RawPayloadComponentExport } from "../../../types/PayloadComponentExport.js";
 import type { CollectionSchemaMap } from "../../../types/CollectionSchemaMap.js";
-import type { TargetSelectionMode } from "../../../types/TargetSelection.js";
 import type { ConfigModifier } from "../../../types/ConfigModifier.js";
 import type { TranslationProvider } from "../../../core/domain/translation-providers/index.js";
 import type { TaskRunnerFactory } from "../task-runner/index.js";
 import type { ProvenanceServiceFactory } from "../provenance/index.js";
+import type { TranslatorSettings } from "../../../settings.js";
 
 import type { CollectionAdminSlot, LevelContext, TranslationContext } from "./types.js";
 
@@ -68,14 +68,12 @@ function attachToSlot(
  */
 export class PluginConfigBuilder implements LevelContext {
   readonly collections: CollectionConfig[];
-  readonly basePath: string;
+  readonly settings: TranslatorSettings;
   readonly access?: AccessGuard;
   readonly taskRunnerFactory: TaskRunnerFactory;
   readonly schemaMap: CollectionSchemaMap;
   readonly translationProvider: TranslationProvider;
   readonly provenanceServiceFactory?: ProvenanceServiceFactory;
-  readonly targetSelection: TargetSelectionMode;
-  readonly inlineMarks: boolean;
 
   private readonly endpoints: Endpoint[] = [];
   private readonly collectionComponents: CollectionComponent[] = [];
@@ -84,14 +82,12 @@ export class PluginConfigBuilder implements LevelContext {
 
   constructor(deps: PluginConfigBuilderDeps) {
     this.collections = deps.collections;
-    this.basePath = deps.basePath;
+    this.settings = deps.settings;
     this.access = deps.access;
     this.taskRunnerFactory = deps.taskRunnerFactory;
     this.schemaMap = deps.schemaMap;
     this.translationProvider = deps.translationProvider;
     this.provenanceServiceFactory = deps.provenanceServiceFactory;
-    this.targetSelection = deps.targetSelection;
-    this.inlineMarks = deps.inlineMarks;
   }
 
   addEndpoints(endpoints: Endpoint[]): void {

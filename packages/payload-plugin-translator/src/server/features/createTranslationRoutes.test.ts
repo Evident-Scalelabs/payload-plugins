@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 
+import { resolveSettings } from "../../settings.js";
 import { createTranslationRoutes } from "./createTranslationRoutes.js";
 import type { TranslationRoutesDeps } from "./createTranslationRoutes.js";
 
@@ -10,7 +11,7 @@ import type { TranslationRoutesDeps } from "./createTranslationRoutes.js";
 const deps = (basePath?: string): TranslationRoutesDeps => ({
   taskRunnerFactory: { create: vi.fn() },
   collectionConfig: { availableCollections: new Set() },
-  basePath,
+  settings: resolveSettings({ basePath }),
 });
 
 describe("createTranslationRoutes (bundle contract)", () => {

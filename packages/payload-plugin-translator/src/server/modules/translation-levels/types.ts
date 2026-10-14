@@ -3,10 +3,10 @@ import type { CollectionConfig, Endpoint } from "payload";
 import type { AccessGuard } from "../../../types/AccessGuard.js";
 import type { RawPayloadComponentExport } from "../../../types/PayloadComponentExport.js";
 import type { CollectionSchemaMap } from "../../../types/CollectionSchemaMap.js";
-import type { TargetSelectionMode } from "../../../types/TargetSelection.js";
 import type { TranslationProvider } from "../../../core/domain/translation-providers/index.js";
 import type { TaskRunnerFactory } from "../task-runner/index.js";
 import type { ProvenanceServiceFactory } from "../provenance/index.js";
+import type { TranslatorSettings } from "../../../settings.js";
 
 export type CollectionAdminSlot = "beforeDocumentControls" | "beforeListTable";
 
@@ -18,7 +18,8 @@ export type CollectionAdminSlot = "beforeDocumentControls" | "beforeListTable";
  */
 export type TranslationContext = {
   readonly collections: CollectionConfig[];
-  readonly basePath: string;
+  /** The plugin's resolved settings, relayed whole — see `src/settings.ts`. */
+  readonly settings: TranslatorSettings;
   readonly access?: AccessGuard;
   readonly taskRunnerFactory: TaskRunnerFactory;
   /** Deep-cloned localized field schema per managed collection slug. */
@@ -27,10 +28,6 @@ export type TranslationContext = {
   readonly translationProvider: TranslationProvider;
   /** Builds a provenance service; absent when provenance is disabled (staleness then reports empty). */
   readonly provenanceServiceFactory?: ProvenanceServiceFactory;
-  /** Resolved target-language selection mode (`'single'` default) — drives which target control the
-   * admin forms render. */
-  readonly targetSelection: TargetSelectionMode;
-  readonly inlineMarks: boolean;
 };
 
 /**

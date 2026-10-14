@@ -56,12 +56,20 @@ export type CollectionTranslationStatusItem = { id: string; status: DocumentTran
 
 export type CollectionTranslationStatus = {
   docs: Array<CollectionTranslationStatusItem>;
+  failed_window_ms: number;
 };
 
-export type GroupedCollectionTranslationStatus = Record<
+/** What the collection panel reports on: work under way, never work already finished. */
+export type ReportedStatus = Exclude<
   DocumentTranslationStatus,
-  CollectionTranslationStatusItem[]
+  DocumentTranslationStatus.COMPLETED
 >;
+
+/** `counts.failed` reaches back only `failedWindowMs`, not over all time. */
+export type CollectionTranslationPanel = {
+  counts: Record<ReportedStatus, number>;
+  failedWindowMs: number;
+};
 
 /** One translated target locale's staleness relative to its source (#50). */
 export type StalenessLocale = {

@@ -56,6 +56,10 @@ function requestKey(task: TaskInput, scope: RequestScope): string {
   return JSON.stringify(requestShape(task, scope));
 }
 
+const settledSince = (moment: Date): Where => ({
+  or: [{ hasError: { not_equals: true } }, { updatedAt: { greater_than: moment.toISOString() } }],
+});
+
 function documentKey(collectionSlug: string, collectionId: string): string {
   return `${collectionSlug}\u0000${collectionId}`;
 }
@@ -289,11 +293,13 @@ export class PayloadJobsTaskRunner implements TaskRunner {
     collectionSlug: CollectionSlug,
     filter?: Array<string | number> | TaskFilter
   ): Promise<Task[]> {
-    const { documentIds, excludeCompleted } = toTaskFilter(filter);
-    const wanted = documentIds?.length ? new Set(documentIds.map(String)) : undefined;
+    const { documentIds, excludeCompleted, excludeGivenUpBefore } = toTaskFilter(filter);
+    const wanted = documentIds ? new Set(documentIds.map(String)) : undefined;
+    if (wanted?.size === 0) return [];
 
     const narrowed: Where[] = [ofCollection(collectionSlug)];
     if (excludeCompleted) narrowed.push({ completedAt: { exists: false } });
+    if (excludeGivenUpBefore) narrowed.push(settledSince(excludeGivenUpBefore));
     if (wanted) narrowed.push(ofDocuments([...wanted]));
 
     const jobs = await this.findRawJobs({ and: narrowed });

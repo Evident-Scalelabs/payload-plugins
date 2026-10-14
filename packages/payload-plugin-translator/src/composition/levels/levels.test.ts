@@ -4,6 +4,7 @@ import type { CollectionConfig } from "payload";
 import { TranslateDocumentExport } from "../../client/widgets/translate-document/index.js";
 import { BulkDocumentTranslationDashboard } from "../../client/widgets/bulk-translation-dashboard/ui/BulkTranslationDashboard.export.js";
 
+import { resolveSettings } from "../../settings.js";
 import { documentLevel } from "./documentLevel.js";
 import { collectionLevel } from "./collectionLevel.js";
 import type {
@@ -29,13 +30,11 @@ const componentFor = (ctx: LevelContext, slot: CollectionAdminSlot) => {
 // we only assert the wiring (which primitive, which slot).
 const makeCtx = (): LevelContext => ({
   collections: [{ slug: "posts", fields: [] } as unknown as CollectionConfig],
-  basePath: "/translate",
+  settings: resolveSettings({}),
   access: undefined,
   taskRunnerFactory: { create: vi.fn() },
   schemaMap: new Map(),
   translationProvider: { translate: vi.fn() },
-  targetSelection: "single",
-  inlineMarks: false,
   addEndpoints: vi.fn(),
   addCollectionComponent: vi.fn(),
 });

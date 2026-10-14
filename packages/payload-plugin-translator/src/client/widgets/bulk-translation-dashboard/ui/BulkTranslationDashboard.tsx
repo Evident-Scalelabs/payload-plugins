@@ -71,10 +71,7 @@ export default function BulkTranslationDashboard({
   const panelStatus = deriveCollectionPanelStatus(status);
   const hasAnyCount = !!(
     status &&
-    (status.completed.length ||
-      status.failed.length ||
-      status.running.length ||
-      status.pending.length)
+    (status.counts.failed || status.counts.running || status.counts.pending)
   );
   const showStatus = collectionTranslationApi.isPending || hasAnyCount;
 

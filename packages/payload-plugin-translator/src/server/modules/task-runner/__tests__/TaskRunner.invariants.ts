@@ -140,10 +140,6 @@ export function assertTaskRunnerContract(name: string, make: MakeTaskRunner): vo
 
         expect(reported, "no handle names work to stop, so nothing settled").toEqual([]);
       });
-
-      it("answers about no documents, not about all of them", async () => {
-        expect(await runner.findByCollection(SLUG, [])).toEqual([]);
-      });
     });
 
     describe("a handle is a non-empty string", () => {
@@ -470,6 +466,27 @@ export function assertTaskRunnerContract(name: string, make: MakeTaskRunner): vo
           tasks.filter((task) => task.input.collectionId !== kept),
           "the array means what { documentIds } means"
         ).toEqual([]);
+      });
+
+      it("answers about no documents, not about all of them", async () => {
+        await runner.enqueue([input(documentForThisCheck(1), "de")]);
+
+        expect(
+          await runner.findByCollection(SLUG, []),
+          "an empty list names no document, so it cannot mean every document"
+        ).toEqual([]);
+      });
+
+      it("rejects nothing but a run that gave up, whatever the cutoff", async () => {
+        const live = documentForThisCheck(1);
+        await runner.enqueue([input(live, "de")]);
+
+        const tasks = await runner.findByCollection(SLUG, { excludeGivenUpBefore: new Date() });
+
+        expect(
+          tasks.map((task) => task.input.collectionId),
+          "a cutoff on give-up is not a cutoff on age"
+        ).toContain(live);
       });
 
       it("drops tasks that have finished", async () => {

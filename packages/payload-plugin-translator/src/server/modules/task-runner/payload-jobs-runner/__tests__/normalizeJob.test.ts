@@ -116,10 +116,11 @@ describe("normalizeJob", () => {
       expect(task.completedAt).toBe("2024-01-01T01:00:00Z");
     });
 
-    it("returns failed status when error is set", () => {
+    it("returns failed status once the queue has given up", () => {
       const job: PayloadJob = {
         ...baseJob,
         error: { message: "Something went wrong" },
+        hasError: true,
       };
       const task = normalizeJob(job);
       expect(task.status).toBe("failed");
@@ -296,7 +297,32 @@ describe("normalizeJobLocales", () => {
     expect(rows.map((r) => r.input.targetLng)).toEqual(["de", "fr", "es"]);
   });
 
-  it("reports each locale's own outcome from the job log, not the job's status", () => {
+  it("does not call a locale failed while its run is still retrying", () => {
+    const [de] = normalizeJobLocales({
+      ...workflowJob,
+      input: { ...workflowJob.input, target_lngs: ["de"] },
+      log: [{ state: "failed", input: { target_lng: "de" } }],
+    } as PayloadJob);
+
+    expect(
+      de?.status,
+      "a locale whose last attempt failed but which will be tried again is still work in flight"
+    ).toBe("pending");
+  });
+
+  it("calls a locale failed once its run has given up", () => {
+    const [de] = normalizeJobLocales({
+      ...workflowJob,
+      input: { ...workflowJob.input, target_lngs: ["de"] },
+      error: { message: "boom" },
+      hasError: true,
+      log: [{ state: "failed", input: { target_lng: "de" } }],
+    } as PayloadJob);
+
+    expect(de?.status).toBe("failed");
+  });
+
+  it("takes a locale's success from its own log entry, not from the job's status", () => {
     const rows = normalizeJobLocales({
       ...workflowJob,
       processing: true,
@@ -305,10 +331,30 @@ describe("normalizeJobLocales", () => {
         { state: "failed", completedAt: "2024-01-01T00:02:00Z", input: { target_lng: "fr" } },
       ],
     });
+    expect(
+      rows.map((r) => [r.input.targetLng, r.status]),
+      "de finished on its own evidence; fr's attempt failed but the run has not given up, so it is still running"
+    ).toEqual([
+      ["de", "completed"],
+      ["fr", "running"],
+      ["es", "running"],
+    ]);
+  });
+
+  it("keeps a finished locale finished even once the run gives up", () => {
+    const rows = normalizeJobLocales({
+      ...workflowJob,
+      error: { message: "boom" },
+      hasError: true,
+      log: [
+        { state: "succeeded", completedAt: "2024-01-01T00:01:00Z", input: { target_lng: "de" } },
+        { state: "failed", completedAt: "2024-01-01T00:02:00Z", input: { target_lng: "fr" } },
+      ],
+    });
     expect(rows.map((r) => [r.input.targetLng, r.status])).toEqual([
       ["de", "completed"],
       ["fr", "failed"],
-      ["es", "running"],
+      ["es", "failed"],
     ]);
   });
 

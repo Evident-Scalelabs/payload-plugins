@@ -1,6 +1,6 @@
 import { DocumentTranslationStatus } from "./enums.js";
 import type { StatusDotColor } from "./statusRows.js";
-import type { DocumentTranslation, GroupedCollectionTranslationStatus } from "./types.js";
+import type { CollectionTranslationPanel, DocumentTranslation } from "./types.js";
 
 /**
  * The single aggregate signal shown on a translate trigger (document or collection). Detail lives in
@@ -102,17 +102,15 @@ export function derivePanelStatus({ runStatus, staleLocales }: PanelStatusInput)
 }
 
 /**
- * Collapse a collection's grouped job counts into one trigger marker. Priority:
- * `in-progress (running/pending) → failed → fresh → none`. In-progress outranks failures because
- * work is actively happening and self-resolves; once nothing is running, a failure is surfaced.
- * There is no `stale` here — staleness is a per-document signal, not tracked for the bulk dashboard.
+ * The one marker a collection's trigger shows. Work in flight outranks a failure: it self-resolves,
+ * so a failure surfaces only once nothing is running.
  */
 export function deriveCollectionPanelStatus(
-  status: GroupedCollectionTranslationStatus | undefined
+  panel: CollectionTranslationPanel | undefined
 ): PanelStatus {
-  if (!status) return { kind: "none" };
-  if (status.running.length > 0 || status.pending.length > 0) return { kind: "running" };
-  if (status.failed.length > 0) return { kind: "failed" };
-  if (status.completed.length > 0) return { kind: "fresh" };
+  if (!panel) return { kind: "none" };
+  const { counts } = panel;
+  if (counts.running > 0 || counts.pending > 0) return { kind: "running" };
+  if (counts.failed > 0) return { kind: "failed" };
   return { kind: "none" };
 }

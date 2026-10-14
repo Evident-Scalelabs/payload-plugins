@@ -7,8 +7,9 @@ import { useTranslateKitConfig } from "../../../../app/config/index.js";
 import { handleNextApiError } from "../../../../shared/lib/errors/handleApiError.js";
 import { DocumentTranslationStatus } from "../../model/enums.js";
 import type {
+  CollectionTranslationPanel,
   CollectionTranslationStatus,
-  GroupedCollectionTranslationStatus,
+  ReportedStatus,
 } from "../../model/types.js";
 
 type Props = {
@@ -29,7 +30,7 @@ export function useCollectionTranslationStatus({ collection }: Props, options?: 
   const queryClient = useQueryClient();
   const { basePath } = useTranslateKitConfig();
 
-  const query = useQuery<CollectionTranslationStatus, Error, GroupedCollectionTranslationStatus>({
+  const query = useQuery<CollectionTranslationStatus, Error, CollectionTranslationPanel>({
     queryKey: getCollectionTranslationQueryKey({ collection }),
     queryFn: async ({ signal }) => {
       return handleNextApiError(async () => {
@@ -42,25 +43,25 @@ export function useCollectionTranslationStatus({ collection }: Props, options?: 
       });
     },
     enabled: options?.enabled,
-    refetchInterval: (query) => {
-      const docs = query.state.data?.docs;
-      const pending = docs?.some((doc) => doc.status === DocumentTranslationStatus.PENDING);
-      const running = docs?.some((doc) => doc.status === DocumentTranslationStatus.RUNNING);
-      return pending || running ? POLLING_INTERVAL_MILLISECONDS : false;
+    refetchInterval: (current) => {
+      const docs = current.state.data?.docs ?? [];
+      const inFlight = docs.some(
+        (doc) =>
+          doc.status === DocumentTranslationStatus.PENDING ||
+          doc.status === DocumentTranslationStatus.RUNNING
+      );
+      return inFlight ? POLLING_INTERVAL_MILLISECONDS : false;
     },
-    select: (data): GroupedCollectionTranslationStatus => {
-      const grouped: GroupedCollectionTranslationStatus = {
-        [DocumentTranslationStatus.PENDING]: [],
-        [DocumentTranslationStatus.RUNNING]: [],
-        [DocumentTranslationStatus.COMPLETED]: [],
-        [DocumentTranslationStatus.FAILED]: [],
+    select: (data): CollectionTranslationPanel => {
+      const counts: Record<ReportedStatus, number> = {
+        [DocumentTranslationStatus.PENDING]: 0,
+        [DocumentTranslationStatus.RUNNING]: 0,
+        [DocumentTranslationStatus.FAILED]: 0,
       };
-
-      data.docs.forEach((doc) => {
-        if (grouped[doc.status]) grouped[doc.status].push(doc);
-      });
-
-      return grouped;
+      for (const doc of data.docs) {
+        if (doc.status in counts) counts[doc.status as ReportedStatus] += 1;
+      }
+      return { counts, failedWindowMs: data.failed_window_ms };
     },
   });
 

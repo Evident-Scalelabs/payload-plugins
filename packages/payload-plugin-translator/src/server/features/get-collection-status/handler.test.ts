@@ -57,6 +57,7 @@ describe("GetCollectionStatusHandler", () => {
 
     config = {
       availableCollections: new Set(["posts", "pages"] as CollectionSlug[]),
+      failedWindowMs: 259_200_000,
     };
 
     handler = new GetCollectionStatusHandler(config, mockTaskRunnerFactory);
@@ -103,7 +104,7 @@ describe("GetCollectionStatusHandler", () => {
 
       expect(response.status).toBe(200);
       const body = await response.json();
-      expect(body.data).toEqual({ docs: [] });
+      expect(body.data).toEqual({ docs: [], failed_window_ms: 259_200_000 });
     });
 
     it("asks which documents are visible once, not once per row", async () => {
@@ -152,7 +153,13 @@ describe("GetCollectionStatusHandler", () => {
 
       await handler.handle(req);
 
-      expect(mockTaskRunner.findByCollection).toHaveBeenCalledWith("pages");
+      expect(
+        mockTaskRunner.findByCollection,
+        "the panel asks what the collection is doing: work in flight, plus failures recent enough to act on"
+      ).toHaveBeenCalledWith("pages", {
+        excludeCompleted: true,
+        excludeGivenUpBefore: expect.any(Date),
+      });
     });
 
     it("creates task runner with request payload", async () => {

@@ -5,7 +5,6 @@ import { configureAutoTranslate } from "./server/modules/auto-translate/index.js
 import { configureProvenance } from "./server/modules/provenance/index.js";
 import type { AccessGuard } from "./types/AccessGuard.js";
 import type { CollectionSchemaMap } from "./types/CollectionSchemaMap.js";
-import type { TargetSelectionMode } from "./types/TargetSelection.js";
 import { projectFieldsToFieldLike } from "./core/kernel/field-traversal/index.js";
 import type { TranslationProvider } from "./core/domain/translation-providers/index.js";
 import type { TaskRunnerProvider } from "./server/modules/task-runner/index.js";
@@ -14,9 +13,10 @@ import type { TranslationLifecycleCallbacks } from "./server/modules/lifecycle/i
 import { documentLevel, collectionLevel } from "./composition/levels/index.js";
 import type { TranslationLevel } from "./server/modules/translation-levels/index.js";
 import { PluginConfigBuilder } from "./server/modules/translation-levels/PluginConfigBuilder.js";
-import { normalizePath } from "./server/shared/index.js";
+import { resolveSettings } from "./settings.js";
+import type { TranslatorSettingsOptions } from "./settings.js";
 
-export type TranslatorPluginConfig = {
+export type TranslatorPluginConfig = TranslatorSettingsOptions & {
   /**
    * Original collection configs (same objects passed to buildConfig).
    * IMPORTANT: Must be the original collection objects, NOT sanitized configs from payload.collections.
@@ -43,13 +43,6 @@ export type TranslatorPluginConfig = {
    * @since 0.14.0 — previously optional, defaulting to open.
    */
   access: AccessGuard;
-  /**
-   * Base path for all translation API endpoints.
-   * Useful to avoid conflicts with existing routes.
-   * @example '/my-translate' results in '/my-translate/enqueue', '/my-translate/run/:id', etc.
-   * @default '/translate'
-   */
-  basePath?: string;
   /**
    * Which translation surfaces to enable, as level factories — `documentLevel()`,
    * `collectionLevel()`, `fieldLevel()`. Omit for the
@@ -87,41 +80,6 @@ export type TranslatorPluginConfig = {
    * @since 0.7.0
    */
   lifecycle?: TranslationLifecycleCallbacks;
-  /**
-   * How the target-language field behaves in the translation forms. `'single'` (default) keeps
-   * today's one-locale-per-run behaviour, byte-identical. `'multi'` renders a compact multi-select so
-   * an editor can queue several target locales in one run — the run fans out one translation per
-   * `(document × target locale)`. Opt-in and fully backward-compatible; no schema, no migration.
-   * @default 'single'
-   * @since 0.10.0
-   */
-  targetSelection?: TargetSelectionMode;
-  /**
-   * Where switches for behaviour on its way to becoming the default live. The option itself is
-   * permanent; each **entry** is deprecated the day it ships, because it exists only so you can
-   * adopt a change early and the next major removes the switch, not the behaviour.
-   *
-   * @since 0.13.0
-   */
-  experimental?: {
-    /**
-     * Translate each rich-text container (paragraph, heading, list item) as one string with
-     * numbered inline marks, instead of node by node.
-     *
-     * Requires a provider declaring `capabilities.inlineMarks`; without one the plugin keeps
-     * translating node by node. A container whose reply comes back with damaged marks is left in
-     * its source language rather than half-written.
-     *
-     * Turning it back off stops future translations from splitting wrappers; documents already
-     * translated under it stay split. And the next major removes the flag itself, so it is a
-     * schedule, not a permanent safety valve.
-     *
-     * @default false
-     * @deprecated Transitional. Removed in the next major, when this becomes the only mode.
-     * @see docs/DEPRECATIONS.md#experimental-inline-marks — why this exists and when it goes
-     */
-    inlineMarks?: boolean;
-  };
 };
 
 /** @deprecated Use `TranslatorPluginConfig` instead */
@@ -137,18 +95,9 @@ export class TranslateCollectionPlugin {
 
   init(): (config: Config) => Promise<Config> {
     return async (config) => {
-      const {
-        access,
-        translationProvider,
-        runner,
-        collections,
-        levels,
-        provenance,
-        lifecycle,
-        targetSelection = "single",
-        experimental,
-        basePath: rawBasePath = "/translate",
-      } = this.pluginConfig;
+      const { access, translationProvider, runner, collections, levels, provenance, lifecycle } =
+        this.pluginConfig;
+      const settings = resolveSettings(this.pluginConfig);
 
       if (!access) {
         throw new Error(
@@ -161,13 +110,11 @@ export class TranslateCollectionPlugin {
         collections.map((col) => [col.slug, projectFieldsToFieldLike(col.fields)])
       );
       const collectionSlugs = new Set(schemaMap.keys());
-      const basePath = normalizePath(rawBasePath);
 
       const provenanceModule = configureProvenance(provenance, schemaMap);
-      const inlineMarks = experimental?.inlineMarks === true;
 
       const { taskRunnerFactory, configModifier: runnerConfigModifier } = wireTranslateRunner({
-        inlineMarks,
+        inlineMarks: settings.inlineMarks,
         translationProvider,
         schemaMap,
         provenanceServiceFactory: provenanceModule.serviceFactory,
@@ -180,21 +127,19 @@ export class TranslateCollectionPlugin {
       const activeLevels = levels ?? [documentLevel(), collectionLevel()];
       const builder = new PluginConfigBuilder({
         collections,
-        basePath,
+        settings,
         access,
         taskRunnerFactory,
         schemaMap,
         translationProvider,
         provenanceServiceFactory: provenanceModule.serviceFactory,
-        targetSelection,
-        inlineMarks,
       });
       for (const level of activeLevels) level.extend(builder);
 
       builder.addConfigModifier(runnerConfigModifier);
       builder.addConfigModifier(provenanceModule.configure(collectionSlugs));
       builder.addConfigModifier(autoTranslateModule.configure(collectionSlugs));
-      builder.addAdminProvider(new CacheProviderExport(basePath));
+      builder.addAdminProvider(new CacheProviderExport(settings.basePath));
 
       return builder.applyTo(config);
     };

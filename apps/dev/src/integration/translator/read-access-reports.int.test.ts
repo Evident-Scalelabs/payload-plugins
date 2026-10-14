@@ -126,10 +126,12 @@ describe("a report shows only what its caller may read", () => {
   });
 
   it("still reports to a caller the rule allows", async () => {
-    const { data } = await collectionReport(allowed);
+    // The collection report answers only with work in flight, and this runner finishes every
+    // locale before it returns.
+    const { data } = await documentReport(allowed);
 
     expect(
-      (data as { data?: { docs?: unknown[] } }).data?.docs?.length,
+      (data as { data?: unknown[] }).data?.length,
       "hiding must not be a blanket refusal"
     ).toBeGreaterThan(0);
   });

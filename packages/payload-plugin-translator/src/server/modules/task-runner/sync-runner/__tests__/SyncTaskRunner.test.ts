@@ -39,6 +39,37 @@ describe("SyncTaskRunner", () => {
     ...overrides,
   });
 
+  describe("excludeGivenUpBefore", () => {
+    const givenUp = async (): Promise<void> => {
+      mockHandler = vi.fn().mockRejectedValue(new Error("provider down"));
+      runner = new SyncTaskRunner(mockPayload, contextOf(mockHandler), tasks);
+      await runner.enqueue([createInput()]);
+    };
+
+    it("drops a run that gave up before the cutoff", async () => {
+      await givenUp();
+
+      const kept = await runner.findByCollection("posts" as CollectionSlug, {
+        excludeGivenUpBefore: new Date(Date.now() + 1000),
+      });
+
+      expect(kept, "a failure older than the window is not an action to take").toEqual([]);
+    });
+
+    it("keeps a run that gave up after the cutoff", async () => {
+      await givenUp();
+
+      const kept = await runner.findByCollection("posts" as CollectionSlug, {
+        excludeGivenUpBefore: new Date(Date.now() - 1000),
+      });
+
+      expect(
+        kept.map((task) => task.status),
+        "a recent failure is still worth reporting"
+      ).toEqual(["failed"]);
+    });
+  });
+
   describe("enqueue", () => {
     it("executes handler immediately", async () => {
       const input = createInput();

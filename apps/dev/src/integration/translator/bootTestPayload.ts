@@ -88,6 +88,7 @@ export async function bootTestPayload(opts?: {
   onTranslate?: (targetLng: string) => Promise<void> | void;
   runner?: TaskRunnerProvider;
   lifecycle?: TranslationLifecycleCallbacks;
+  failedWindowMs?: number;
   /** Turn on container-granular rich-text translation, and declare the provider able to keep marks. */
   inlineMarks?: boolean;
   /**
@@ -164,6 +165,7 @@ export async function bootTestPayload(opts?: {
         levels: opts?.fieldSurface ? [documentLevel(), fieldLevel()] : [documentLevel()],
         provenance: true,
         ...(opts?.lifecycle ? { lifecycle: opts.lifecycle } : {}),
+        ...(opts?.failedWindowMs === undefined ? {} : { failedWindowMs: opts.failedWindowMs }),
         ...(opts?.inlineMarks ? { experimental: { inlineMarks: true } } : {}),
       }),
     ],

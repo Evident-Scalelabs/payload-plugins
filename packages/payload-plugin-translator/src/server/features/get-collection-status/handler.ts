@@ -7,9 +7,7 @@ import { isCollectionAvailable, visibleIds } from "../_lib/collection-utils.js";
 import { GetCollectionStatusInputSchema } from "./model.js";
 import type { GetCollectionStatusConfig } from "./model.js";
 
-/**
- * Gets translation status for all documents in a collection
- */
+/** What a collection is doing: runs in flight, plus failures inside the configured window. */
 export class GetCollectionStatusHandler {
   private readonly config: GetCollectionStatusConfig;
   private readonly taskRunnerFactory: TaskRunnerFactory;
@@ -34,12 +32,17 @@ export class GetCollectionStatusHandler {
       return ServerResponse.badRequest("Collection not available for translation");
     }
 
+    const { failedWindowMs } = this.config;
     const runner = this.taskRunnerFactory.create(req.payload);
-    const tasks = await runner.findByCollection(collectionSlug);
+    const tasks = await runner.findByCollection(collectionSlug, {
+      excludeCompleted: true,
+      excludeGivenUpBefore: new Date(Date.now() - failedWindowMs),
+    });
     const ids = tasks.map((task) => String(task.input.collectionId));
     const visible = await visibleIds(req.payload, collectionSlug, ids, req.user);
 
     return ServerResponse.success({
+      failed_window_ms: failedWindowMs,
       docs: tasks
         .filter((task) => visible.has(String(task.input.collectionId)))
         .map((task) => ({

@@ -7,7 +7,7 @@ import { readCollectionRef } from "./readCollectionRef.js";
 function getJobStatus(job: PayloadJob): TaskStatus {
   if (job.completedAt) return "completed";
   if (job.processing) return "running";
-  if (job.error) return "failed";
+  if (job.hasError) return "failed";
   return "pending";
 }
 
@@ -59,8 +59,11 @@ export function latestLogByLocale(job: PayloadJob): Map<string, JobLogEntry> {
 }
 
 /**
- * One {@link Task} per target locale, its state read from {@link latestLogByLocale}. A pre-workflow
- * job carries a single `target_lng` and expands to itself.
+ * One {@link Task} per entry of the run's `target_lngs`; a job without a list expands to itself.
+ *
+ * A locale is `completed` only on its own succeeded log entry; every other locale takes the run's
+ * status, because Payload appends a `failed` entry on every attempt and marks the job only once it
+ * gives up (`queues/errors/handleTaskError.js`).
  */
 export function normalizeJobLocales(job: PayloadJob): Task[] {
   const targets = job.input?.target_lngs;
@@ -75,7 +78,7 @@ export function normalizeJobLocales(job: PayloadJob): Task[] {
     const succeeded = entry.state === "succeeded";
     return {
       ...base,
-      status: succeeded ? "completed" : "failed",
+      status: succeeded ? "completed" : base.status,
       completedAt: succeeded ? (entry.completedAt ?? undefined) : undefined,
       error: succeeded ? undefined : base.error,
       cancelled: succeeded ? false : base.cancelled,

@@ -28,6 +28,8 @@ export type CollectionStatusItem = {
  */
 export type GetCollectionStatusOutput = {
   docs: CollectionStatusItem[];
+  /** The failures in `docs` reach back only this far, in ms. */
+  failed_window_ms: number;
 };
 
 /**
@@ -35,4 +37,5 @@ export type GetCollectionStatusOutput = {
  */
 export type GetCollectionStatusConfig = {
   availableCollections: Set<CollectionSlug>;
+  failedWindowMs: number;
 };
