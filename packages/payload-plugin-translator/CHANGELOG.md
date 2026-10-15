@@ -1,3 +1,15 @@
+# @focus-reactive/payload-plugin-translator [0.17.0](https://github.com/focusreactive/payload-plugins/compare/@focus-reactive/payload-plugin-translator@0.16.0...@focus-reactive/payload-plugin-translator@0.17.0) (2026-10-15)
+
+
+### Bug Fixes
+
+* **translator:** send the status narrowing to the database ([d97fbbd](https://github.com/focusreactive/payload-plugins/commit/d97fbbd8d8c0f095314eb6f69d84220349b876ee)), closes [#123](https://github.com/focusreactive/payload-plugins/issues/123)
+
+
+### Features
+
+* **translator:** bound the collection panel to work that is happening ([d7bdf58](https://github.com/focusreactive/payload-plugins/commit/d7bdf5863b726362d5e478838ce4a4833fe19a32)), closes [#123](https://github.com/focusreactive/payload-plugins/issues/123)
+
 # @focus-reactive/payload-plugin-translator [0.16.0](https://github.com/focusreactive/payload-plugins/compare/@focus-reactive/payload-plugin-translator@0.15.0...@focus-reactive/payload-plugin-translator@0.16.0) (2026-10-12)
 
 
