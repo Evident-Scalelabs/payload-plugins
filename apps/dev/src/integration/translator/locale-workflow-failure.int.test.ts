@@ -89,11 +89,11 @@ describe("when one locale's provider fails", () => {
       [];
     expect(
       rows.map((row) => [row.input.target_lng, row.status]).sort(),
-      "each locale should report its own outcome"
+      "a locale is finished only on its own evidence; one whose attempt failed is still owed a retry, so it reads as pending rather than as a failure to act on"
     ).toEqual([
       ["de", "completed"],
       ["es", "pending"],
-      ["fr", "failed"],
+      ["fr", "pending"],
     ]);
 
     // Payload backs a failed job off exponentially; only the manual-run endpoint lifts that, so the

@@ -80,4 +80,12 @@ export type TaskFilter = {
    * supersede — so it is wider than the `pending` status.
    */
   excludeCompleted?: boolean;
+  /**
+   * Runs still in flight are kept however old: the queue gives up only after the last retry, not on
+   * a failed attempt (`queues/errors/handleTaskError.js`). Reaches the database under the Payload
+   * Jobs runner.
+   *
+   * @since 0.17.0
+   */
+  excludeGivenUpBefore?: Date;
 };

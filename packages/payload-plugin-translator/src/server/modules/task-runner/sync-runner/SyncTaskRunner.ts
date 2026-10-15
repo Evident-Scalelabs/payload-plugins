@@ -100,7 +100,7 @@ export class SyncTaskRunner implements TaskRunner {
     collectionSlug: CollectionSlug,
     filter?: Array<string | number> | TaskFilter
   ): Promise<Task[]> {
-    const { documentIds, excludeCompleted } = toTaskFilter(filter);
+    const { documentIds, excludeCompleted, excludeGivenUpBefore } = toTaskFilter(filter);
     const results: Task[] = [];
     const wanted = documentIds ? new Set(documentIds.map(String)) : undefined;
 
@@ -108,6 +108,9 @@ export class SyncTaskRunner implements TaskRunner {
       if (task.input.collectionSlug !== collectionSlug) continue;
       if (wanted && !wanted.has(task.input.collectionId)) continue;
       if (excludeCompleted && task.completedAt) continue;
+      if (excludeGivenUpBefore && task.status === "failed") {
+        if (Date.parse(task.updatedAt) < excludeGivenUpBefore.getTime()) continue;
+      }
       results.push(task);
     }
 

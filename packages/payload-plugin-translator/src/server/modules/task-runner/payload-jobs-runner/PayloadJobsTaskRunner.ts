@@ -6,7 +6,14 @@ import { toTaskFilter } from "../toTaskFilter.js";
 import type { EnqueueAssignment, Task, TaskInput, RunResult } from "../types.js";
 import type { PayloadJobsRunnerConfig } from "./config.js";
 import type { PayloadJob, StoredWorkflowInput } from "./store/index.js";
-import { assignmentOf, handleOf, normalizeJobLocales, readCollectionRef } from "./store/index.js";
+import {
+  assignmentOf,
+  handleOf,
+  normalizeJobLocales,
+  ofCollection,
+  ofDocuments,
+  readCollectionRef,
+} from "./store/index.js";
 import { owedOnCancel, planEnqueue } from "./model/index.js";
 import type { RequestShape } from "./model/index.js";
 import type { RequestScope } from "../../../shared/payload/RequestScope.shapes.js";
@@ -48,6 +55,10 @@ function requestShape(task: TaskInput, scope: RequestScope): RequestShape {
 function requestKey(task: TaskInput, scope: RequestScope): string {
   return JSON.stringify(requestShape(task, scope));
 }
+
+const settledSince = (moment: Date): Where => ({
+  or: [{ hasError: { not_equals: true } }, { updatedAt: { greater_than: moment.toISOString() } }],
+});
 
 function documentKey(collectionSlug: string, collectionId: string): string {
   return `${collectionSlug}\u0000${collectionId}`;
@@ -245,11 +256,6 @@ export class PayloadJobsTaskRunner implements TaskRunner {
     return { success: true };
   }
 
-  /**
-   * A job that exhausted its retries carries `hasError: true` and stays excluded from the picker even
-   * after its lock is cleared; only a manual `run()` recovers it.
-   * @returns how many locks were cleared.
-   */
   async reclaimStaleJobs(): Promise<number> {
     const cutoff = new Date(Date.now() - this.config.staleJobTimeoutMs).toISOString();
     const result = await this.payload.update({
@@ -268,10 +274,6 @@ export class PayloadJobsTaskRunner implements TaskRunner {
     return result.docs.length;
   }
 
-  /**
-   * `payload.update`, not the adapter write `extendJob` uses, so the jobs collection's `beforeChange`
-   * hook still runs — it is what keeps a cancelled job cancelled.
-   */
   private async clearPickerBlockers(taskId: string): Promise<void> {
     await this.payload.update({
       collection: this.config.jobsCollection,
@@ -287,18 +289,20 @@ export class PayloadJobsTaskRunner implements TaskRunner {
     return Date.now() - parsed > this.config.staleJobTimeoutMs;
   }
 
-  /**
-   * Matched in memory: the collection reference has two stored shapes (see `readCollectionRef`), so a
-   * `where` on `input.collection_slug` would silently drop every pre-migration job.
-   */
   async findByCollection(
     collectionSlug: CollectionSlug,
     filter?: Array<string | number> | TaskFilter
   ): Promise<Task[]> {
-    const { documentIds, excludeCompleted } = toTaskFilter(filter);
-    const where = excludeCompleted ? { completedAt: { exists: false } } : undefined;
-    const wanted = documentIds?.length ? new Set(documentIds.map(String)) : undefined;
-    const jobs = await this.findRawJobs(where);
+    const { documentIds, excludeCompleted, excludeGivenUpBefore } = toTaskFilter(filter);
+    const wanted = documentIds ? new Set(documentIds.map(String)) : undefined;
+    if (wanted?.size === 0) return [];
+
+    const narrowed: Where[] = [ofCollection(collectionSlug)];
+    if (excludeCompleted) narrowed.push({ completedAt: { exists: false } });
+    if (excludeGivenUpBefore) narrowed.push(settledSince(excludeGivenUpBefore));
+    if (wanted) narrowed.push(ofDocuments([...wanted]));
+
+    const jobs = await this.findRawJobs({ and: narrowed });
     return jobs
       .filter((job) => {
         const ref = readCollectionRef(job.input);

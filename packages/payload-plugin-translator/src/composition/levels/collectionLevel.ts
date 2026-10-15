@@ -22,7 +22,7 @@ export function collectionLevel(): TranslationLevel {
       useDocTranslationApi(ctx);
       ctx.addCollectionComponent(
         "beforeListTable",
-        () => new BulkDocumentTranslationDashboard(ctx.access, ctx.targetSelection)
+        () => new BulkDocumentTranslationDashboard(ctx.access, ctx.settings.targetSelection)
       );
     },
   };

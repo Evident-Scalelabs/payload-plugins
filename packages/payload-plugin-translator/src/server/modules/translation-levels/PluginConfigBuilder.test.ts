@@ -3,16 +3,15 @@ import type { CollectionConfig, Config, Endpoint } from "payload";
 
 import type { RawPayloadComponentExport } from "../../../types/PayloadComponentExport.js";
 
+import { resolveSettings } from "../../../settings.js";
 import { PluginConfigBuilder } from "./PluginConfigBuilder.js";
 
 const deps = (collections: Array<{ slug: string }> = []) => ({
   collections: collections as unknown as CollectionConfig[],
-  basePath: "/translate",
+  settings: resolveSettings({}),
   taskRunnerFactory: { create: vi.fn() },
   schemaMap: new Map(),
   translationProvider: { translate: vi.fn() },
-  targetSelection: "single" as const,
-  inlineMarks: false,
 });
 
 const ep = (method: string, path: string): Endpoint =>

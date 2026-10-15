@@ -1,0 +1,20 @@
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/client/features/collection-translation-progress/ui/CollectionTranslationProgress.test.tsx > the collection progress panel > offers no row for work that finished
+ FAIL  src/client/features/collection-translation-progress/ui/CollectionTranslationProgress.test.tsx > the collection progress panel > still names the work in flight
+ FAIL  src/client/features/collection-translation-progress/ui/CollectionTranslationProgress.test.tsx > the collection progress panel > says how far back the failures it counts go
+TypeError: Cannot read properties of undefined (reading 'length')
+ ❯ src/client/features/collection-translation-progress/ui/CollectionTranslationProgress.tsx:63:33
+     61|     <ul className={styles["status-list"]}>
+     62|       {ROWS.map(({ key, label, color }) => {
+     63|         const count = data[key].length;
+       |                                 ^
+     64|         if (count === 0) {
+     65|           return null;
+ ❯ CollectionTranslationProgress src/client/features/collection-translation-progress/ui/CollectionTranslationProgress.tsx:62:13
+ ❯ Object.react_stack_bottom_frame ../../node_modules/react-dom/cjs/react-dom-client.development.js:25904:20
+ ❯ renderWithHooks ../../node_modules/react-dom/cjs/react-dom-client.development.js:7662:22
+ ❯ updateFunctionComponent ../../node_modules/react-dom/cjs/react-dom-client.development.js:10166:19
+ ❯ beginWork ../../node_modules/react-dom/cjs/react-dom-client.development.js:11778:18
+ ❯ runWithFiberInDEV ../../node_modules/react-dom/cjs/react-dom-client.development.js:874:13
+ ❯ performUnitOfWork ../../node_modules/react-dom/cjs/react-dom-client.development.js:17641:22

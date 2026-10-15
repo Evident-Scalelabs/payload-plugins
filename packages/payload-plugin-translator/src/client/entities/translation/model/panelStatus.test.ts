@@ -9,7 +9,7 @@ import {
   MARKER_DOT,
 } from "./panelStatus.js";
 import { STATE_DOT } from "./statusRows.js";
-import type { DocumentTranslation, GroupedCollectionTranslationStatus } from "./types.js";
+import type { CollectionTranslationPanel, DocumentTranslation, ReportedStatus } from "./types.js";
 
 describe("derivePanelStatus", () => {
   it("failed outranks everything, including stale locales", () => {
@@ -97,68 +97,40 @@ describe("deriveDocumentRunStatus", () => {
 
 describe("deriveCollectionPanelStatus", () => {
   const group = (
-    over: Partial<GroupedCollectionTranslationStatus> = {}
-  ): GroupedCollectionTranslationStatus =>
-    ({
-      [DocumentTranslationStatus.COMPLETED]: [],
-      [DocumentTranslationStatus.FAILED]: [],
-      [DocumentTranslationStatus.RUNNING]: [],
-      [DocumentTranslationStatus.PENDING]: [],
+    over: Partial<Record<ReportedStatus, number>> = {}
+  ): CollectionTranslationPanel => ({
+    counts: {
+      [DocumentTranslationStatus.FAILED]: 0,
+      [DocumentTranslationStatus.RUNNING]: 0,
+      [DocumentTranslationStatus.PENDING]: 0,
       ...over,
-    }) as GroupedCollectionTranslationStatus;
+    },
+    failedWindowMs: 259_200_000,
+  });
 
   it("in-progress (running or pending) outranks failures", () => {
     expect(
       deriveCollectionPanelStatus(
         group({
-          [DocumentTranslationStatus.RUNNING]: [
-            { id: "a", status: DocumentTranslationStatus.RUNNING },
-          ],
-          [DocumentTranslationStatus.FAILED]: [
-            { id: "b", status: DocumentTranslationStatus.FAILED },
-          ],
+          [DocumentTranslationStatus.RUNNING]: 1,
+          [DocumentTranslationStatus.FAILED]: 1,
         })
       )
     ).toEqual({ kind: "running" });
     expect(
       deriveCollectionPanelStatus(
         group({
-          [DocumentTranslationStatus.PENDING]: [
-            { id: "a", status: DocumentTranslationStatus.PENDING },
-          ],
-          [DocumentTranslationStatus.FAILED]: [
-            { id: "b", status: DocumentTranslationStatus.FAILED },
-          ],
+          [DocumentTranslationStatus.PENDING]: 1,
+          [DocumentTranslationStatus.FAILED]: 1,
         })
       )
     ).toEqual({ kind: "running" });
   });
 
   it("failed when something failed and nothing is in progress", () => {
-    expect(
-      deriveCollectionPanelStatus(
-        group({
-          [DocumentTranslationStatus.FAILED]: [
-            { id: "b", status: DocumentTranslationStatus.FAILED },
-          ],
-          [DocumentTranslationStatus.COMPLETED]: [
-            { id: "c", status: DocumentTranslationStatus.COMPLETED },
-          ],
-        })
-      )
-    ).toEqual({ kind: "failed" });
-  });
-
-  it("fresh when only completed", () => {
-    expect(
-      deriveCollectionPanelStatus(
-        group({
-          [DocumentTranslationStatus.COMPLETED]: [
-            { id: "c", status: DocumentTranslationStatus.COMPLETED },
-          ],
-        })
-      )
-    ).toEqual({ kind: "fresh" });
+    expect(deriveCollectionPanelStatus(group({ [DocumentTranslationStatus.FAILED]: 1 }))).toEqual({
+      kind: "failed",
+    });
   });
 
   it("none when empty or undefined", () => {

@@ -30,8 +30,8 @@ export class CancelByCollectionHandler {
     const rows = await runner.findByCollection(collectionSlug, { excludeCompleted: true });
     if (rows.length === 0) return ServerResponse.noContent();
 
-    // A job waiting to retry has every locale logged, so it has no `pending` row — filter by *not
-    // running* instead.
+    // A job is cancellable only while none of its locales is in flight, so this excludes rather
+    // than selects: one running locale protects the whole job.
     const running = new Set(rows.filter((row) => row.status === "running").map((row) => row.id));
     const queuedJobIds = [...new Set(rows.map((row) => row.id))].filter((id) => !running.has(id));
     if (queuedJobIds.length === 0) return ServerResponse.noContent();

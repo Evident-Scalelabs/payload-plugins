@@ -1,0 +1,298 @@
+
+ RUN  v3.2.4 /Users/FocusReactive/Documents/Projects/payload-plugins/packages/payload-plugin-translator
+
+ ❯ src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts (19 tests | 19 failed) 9ms
+   × normalizeJobLocales > gives a run one row per entry of its locale list, in that order 3ms
+     → not implemented — red run
+   × normalizeJobLocales > reproduces a repeated locale as two rows 0ms
+     → not implemented — red run
+   × normalizeJobLocales > gives a job with no locale list one row for the single locale it carries 0ms
+     → not implemented — red run
+   × normalizeJobLocales > gives a job with an empty locale list one row for the single locale it carries 0ms
+     → not implemented — red run
+   × normalizeJobLocales > completes a locale whose own latest entry succeeded, although the run failed 0ms
+     → not implemented — red run
+   × normalizeJobLocales > dates a completed locale by its own entry, not by the run 0ms
+     → not implemented — red run
+   × normalizeJobLocales > leaves a completed locale without an error, although the run carries one 0ms
+     → not implemented — red run
+   × normalizeJobLocales > leaves a completed locale uncancelled, although the run carries an error 0ms
+     → not implemented — red run
+   × normalizeJobLocales > reports a locale whose latest entry failed as the run stands, not as the entry does 0ms
+     → not implemented — red run
+   × normalizeJobLocales > takes a locale's latest entry over its earlier attempt 0ms
+     → not implemented — red run
+   × normalizeJobLocales > does not complete a locale whose latest entry failed after an earlier success 0ms
+     → not implemented — red run
+   × normalizeJobLocales > reports a locale with no entry of its own as the run stands 0ms
+     → not implemented — red run
+   × normalizeJobLocales > gives every row of one run the same id 1ms
+     → not implemented — red run
+   × normalizeJobLocales > reads a run with a completedAt as completed 0ms
+     → not implemented — red run
+   × normalizeJobLocales > reads a run that is processing as running 0ms
+     → not implemented — red run
+   × normalizeJobLocales > reads a run with an error as failed 0ms
+     → not implemented — red run
+   × normalizeJobLocales > reads a run with no completedAt, no processing and no error as pending 0ms
+     → not implemented — red run
+   × normalizeJobLocales > reads a run as completed even though it is also processing and carries an error 0ms
+     → not implemented — red run
+   × normalizeJobLocales > reads a run as running even though it also carries an error 0ms
+     → not implemented — red run
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 19 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts > normalizeJobLocales > gives a run one row per entry of its locale list, in that order
+Error: not implemented — red run
+ ❯ notImplemented __stubs__/normalizeJob.stub.ts:6:9
+      4| 
+      5| const notImplemented = (): never => {
+      6|   throw new Error("not implemented — red run");
+       |         ^
+      7| };
+      8| 
+ ❯ src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts:29:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/19]⎯
+
+ FAIL  src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts > normalizeJobLocales > reproduces a repeated locale as two rows
+Error: not implemented — red run
+ ❯ notImplemented __stubs__/normalizeJob.stub.ts:6:9
+      4| 
+      5| const notImplemented = (): never => {
+      6|   throw new Error("not implemented — red run");
+       |         ^
+      7| };
+      8| 
+ ❯ src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts:40:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/19]⎯
+
+ FAIL  src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts > normalizeJobLocales > gives a job with no locale list one row for the single locale it carries
+Error: not implemented — red run
+ ❯ notImplemented __stubs__/normalizeJob.stub.ts:6:9
+      4| 
+      5| const notImplemented = (): never => {
+      6|   throw new Error("not implemented — red run");
+       |         ^
+      7| };
+      8| 
+ ❯ src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts:48:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/19]⎯
+
+ FAIL  src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts > normalizeJobLocales > gives a job with an empty locale list one row for the single locale it carries
+Error: not implemented — red run
+ ❯ notImplemented __stubs__/normalizeJob.stub.ts:6:9
+      4| 
+      5| const notImplemented = (): never => {
+      6|   throw new Error("not implemented — red run");
+       |         ^
+      7| };
+      8| 
+ ❯ src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts:54:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/19]⎯
+
+ FAIL  src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts > normalizeJobLocales > completes a locale whose own latest entry succeeded, although the run failed
+Error: not implemented — red run
+ ❯ notImplemented __stubs__/normalizeJob.stub.ts:6:9
+      4| 
+      5| const notImplemented = (): never => {
+      6|   throw new Error("not implemented — red run");
+       |         ^
+      7| };
+      8| 
+ ❯ src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts:65:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/19]⎯
+
+ FAIL  src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts > normalizeJobLocales > dates a completed locale by its own entry, not by the run
+Error: not implemented — red run
+ ❯ notImplemented __stubs__/normalizeJob.stub.ts:6:9
+      4| 
+      5| const notImplemented = (): never => {
+      6|   throw new Error("not implemented — red run");
+       |         ^
+      7| };
+      8| 
+ ❯ src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts:78:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/19]⎯
+
+ FAIL  src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts > normalizeJobLocales > leaves a completed locale without an error, although the run carries one
+Error: not implemented — red run
+ ❯ notImplemented __stubs__/normalizeJob.stub.ts:6:9
+      4| 
+      5| const notImplemented = (): never => {
+      6|   throw new Error("not implemented — red run");
+       |         ^
+      7| };
+      8| 
+ ❯ src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts:91:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/19]⎯
+
+ FAIL  src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts > normalizeJobLocales > leaves a completed locale uncancelled, although the run carries an error
+Error: not implemented — red run
+ ❯ notImplemented __stubs__/normalizeJob.stub.ts:6:9
+      4| 
+      5| const notImplemented = (): never => {
+      6|   throw new Error("not implemented — red run");
+       |         ^
+      7| };
+      8| 
+ ❯ src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts:104:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/19]⎯
+
+ FAIL  src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts > normalizeJobLocales > reports a locale whose latest entry failed as the run stands, not as the entry does
+Error: not implemented — red run
+ ❯ notImplemented __stubs__/normalizeJob.stub.ts:6:9
+      4| 
+      5| const notImplemented = (): never => {
+      6|   throw new Error("not implemented — red run");
+       |         ^
+      7| };
+      8| 
+ ❯ src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts:116:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/19]⎯
+
+ FAIL  src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts > normalizeJobLocales > takes a locale's latest entry over its earlier attempt
+Error: not implemented — red run
+ ❯ notImplemented __stubs__/normalizeJob.stub.ts:6:9
+      4| 
+      5| const notImplemented = (): never => {
+      6|   throw new Error("not implemented — red run");
+       |         ^
+      7| };
+      8| 
+ ❯ src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts:130:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/19]⎯
+
+ FAIL  src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts > normalizeJobLocales > does not complete a locale whose latest entry failed after an earlier success
+Error: not implemented — red run
+ ❯ notImplemented __stubs__/normalizeJob.stub.ts:6:9
+      4| 
+      5| const notImplemented = (): never => {
+      6|   throw new Error("not implemented — red run");
+       |         ^
+      7| };
+      8| 
+ ❯ src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts:142:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/19]⎯
+
+ FAIL  src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts > normalizeJobLocales > reports a locale with no entry of its own as the run stands
+Error: not implemented — red run
+ ❯ notImplemented __stubs__/normalizeJob.stub.ts:6:9
+      4| 
+      5| const notImplemented = (): never => {
+      6|   throw new Error("not implemented — red run");
+       |         ^
+      7| };
+      8| 
+ ❯ src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts:153:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/19]⎯
+
+ FAIL  src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts > normalizeJobLocales > gives every row of one run the same id
+Error: not implemented — red run
+ ❯ notImplemented __stubs__/normalizeJob.stub.ts:6:9
+      4| 
+      5| const notImplemented = (): never => {
+      6|   throw new Error("not implemented — red run");
+       |         ^
+      7| };
+      8| 
+ ❯ src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts:160:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/19]⎯
+
+ FAIL  src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts > normalizeJobLocales > reads a run with a completedAt as completed
+Error: not implemented — red run
+ ❯ notImplemented __stubs__/normalizeJob.stub.ts:6:9
+      4| 
+      5| const notImplemented = (): never => {
+      6|   throw new Error("not implemented — red run");
+       |         ^
+      7| };
+      8| 
+ ❯ src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts:168:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/19]⎯
+
+ FAIL  src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts > normalizeJobLocales > reads a run that is processing as running
+Error: not implemented — red run
+ ❯ notImplemented __stubs__/normalizeJob.stub.ts:6:9
+      4| 
+      5| const notImplemented = (): never => {
+      6|   throw new Error("not implemented — red run");
+       |         ^
+      7| };
+      8| 
+ ❯ src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts:174:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/19]⎯
+
+ FAIL  src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts > normalizeJobLocales > reads a run with an error as failed
+Error: not implemented — red run
+ ❯ notImplemented __stubs__/normalizeJob.stub.ts:6:9
+      4| 
+      5| const notImplemented = (): never => {
+      6|   throw new Error("not implemented — red run");
+       |         ^
+      7| };
+      8| 
+ ❯ src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts:180:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/19]⎯
+
+ FAIL  src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts > normalizeJobLocales > reads a run with no completedAt, no processing and no error as pending
+Error: not implemented — red run
+ ❯ notImplemented __stubs__/normalizeJob.stub.ts:6:9
+      4| 
+      5| const notImplemented = (): never => {
+      6|   throw new Error("not implemented — red run");
+       |         ^
+      7| };
+      8| 
+ ❯ src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts:184:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/19]⎯
+
+ FAIL  src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts > normalizeJobLocales > reads a run as completed even though it is also processing and carries an error
+Error: not implemented — red run
+ ❯ notImplemented __stubs__/normalizeJob.stub.ts:6:9
+      4| 
+      5| const notImplemented = (): never => {
+      6|   throw new Error("not implemented — red run");
+       |         ^
+      7| };
+      8| 
+ ❯ src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts:194:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/19]⎯
+
+ FAIL  src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts > normalizeJobLocales > reads a run as running even though it also carries an error
+Error: not implemented — red run
+ ❯ notImplemented __stubs__/normalizeJob.stub.ts:6:9
+      4| 
+      5| const notImplemented = (): never => {
+      6|   throw new Error("not implemented — red run");
+       |         ^
+      7| };
+      8| 
+ ❯ src/server/modules/task-runner/payload-jobs-runner/__tests__/normalizeJobLocales.contract.test.ts:202:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/19]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  19 failed (19)
+   Start at  15:07:15
+   Duration  330ms (transform 35ms, setup 0ms, collect 30ms, tests 9ms, environment 0ms, prepare 57ms)
+

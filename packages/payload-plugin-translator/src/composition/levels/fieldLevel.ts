@@ -34,8 +34,8 @@ export function fieldLevel(): TranslationLevel {
           schemaMap: ctx.schemaMap,
           translationProvider: ctx.translationProvider,
           access: ctx.access,
-          basePath: ctx.basePath,
-          inlineMarks: ctx.inlineMarks,
+          basePath: ctx.settings.basePath,
+          inlineMarks: ctx.settings.inlineMarks,
         }),
       ]);
     },

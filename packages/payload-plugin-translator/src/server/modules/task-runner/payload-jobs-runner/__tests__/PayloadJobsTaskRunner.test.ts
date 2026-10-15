@@ -754,8 +754,7 @@ describe("PayloadJobsTaskRunner", () => {
       });
     });
 
-    it("narrows the SQL where clause by the job's own slugs only", async () => {
-      // See `findByCollection`'s docblock: a `where` on slug or id drops every pre-migration job.
+    it("asks the database for the collection and the documents, in both stored shapes", async () => {
       await runner.findByCollection("posts" as CollectionSlug, [5, 6]);
 
       const whereArg = mockPayload.find.mock.calls[0][0].where;
@@ -767,28 +766,60 @@ describe("PayloadJobsTaskRunner", () => {
               { taskSlug: { equals: "translate_document" } },
             ],
           },
+          {
+            and: [
+              {
+                or: [
+                  { "input.collection_slug": { equals: "posts" } },
+                  { "input.collection.relationTo": { equals: "posts" } },
+                ],
+              },
+              {
+                or: [
+                  { "input.collection_id": { in: ["5", 5, "6", 6] } },
+                  { "input.collection.value": { in: ["5", 5, "6", 6] } },
+                ],
+              },
+            ],
+          },
         ],
       });
-      expect(JSON.stringify(whereArg)).not.toContain("collection_id");
-      expect(JSON.stringify(whereArg)).not.toContain("collection.value");
+    });
+
+    it("offers a document id in both forms the store may hold", async () => {
+      await runner.findByCollection("posts" as CollectionSlug, [5, 6]);
+
+      const whereArg = mockPayload.find.mock.calls[0][0].where;
+      expect(
+        JSON.stringify(whereArg),
+        "the legacy relationship stored a numeric collection's id as a number, and a number never equals a string"
+      ).toContain('"in":["5",5,"6",6]');
+    });
+
+    it("keeps its own-jobs condition when it narrows, rather than replacing it", async () => {
+      await runner.findByCollection("posts" as CollectionSlug);
+
+      const whereArg = mockPayload.find.mock.calls[0][0].where;
+      expect(
+        whereArg.and[0],
+        "a workflow row carries no taskSlug, so dropping this or returns nothing"
+      ).toEqual({
+        or: [
+          { workflowSlug: { equals: "translate_document_locales" } },
+          { taskSlug: { equals: "translate_document" } },
+        ],
+      });
     });
 
     it("adds completedAt to the where clause when asked to exclude finished jobs", async () => {
       await runner.findByCollection("posts" as CollectionSlug, { excludeCompleted: true });
 
       const whereArg = mockPayload.find.mock.calls[0][0].where;
-      expect(whereArg).toEqual({
-        and: [
-          {
-            or: [
-              { workflowSlug: { equals: "translate_document_locales" } },
-              { taskSlug: { equals: "translate_document" } },
-            ],
-          },
-          { completedAt: { exists: false } },
-        ],
-      });
-      expect(JSON.stringify(whereArg)).not.toContain("collection_id");
+      expect(whereArg.and[1].and).toContainEqual({ completedAt: { exists: false } });
+      expect(
+        JSON.stringify(whereArg),
+        "nothing asked about a document, so nothing narrows by one"
+      ).not.toContain("collection_id");
     });
 
     it("reads the deprecated array form as documentIds", async () => {

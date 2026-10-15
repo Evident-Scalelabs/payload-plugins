@@ -12,11 +12,10 @@ import { createGetDocumentStalenessRoute, createDismissStalenessRoute } from "./
 
 export type TranslationRoutesDeps = Pick<
   TranslationContext,
-  "taskRunnerFactory" | "access" | "provenanceServiceFactory"
+  "taskRunnerFactory" | "access" | "provenanceServiceFactory" | "settings"
 > & {
   /** Collections the plugin manages — gates which slugs the routes accept. */
   collectionConfig: { availableCollections: Set<CollectionSlug> };
-  basePath?: string;
 };
 
 /**
@@ -35,9 +34,10 @@ export function createTranslationRoutes({
   taskRunnerFactory,
   collectionConfig,
   access,
-  basePath,
+  settings,
   provenanceServiceFactory,
 }: TranslationRoutesDeps): Endpoint[] {
+  const { basePath, failedWindowMs } = settings;
   const stalenessConfig = {
     availableCollections: collectionConfig.availableCollections,
     provenanceServiceFactory,
@@ -48,7 +48,12 @@ export function createTranslationRoutes({
     createCancelRoute(taskRunnerFactory, access, basePath),
     createCancelByCollectionRoute(collectionConfig, taskRunnerFactory, access, basePath),
     createGetDocumentStatusRoute(collectionConfig, taskRunnerFactory, access, basePath),
-    createGetCollectionStatusRoute(collectionConfig, taskRunnerFactory, access, basePath),
+    createGetCollectionStatusRoute(
+      { ...collectionConfig, failedWindowMs },
+      taskRunnerFactory,
+      access,
+      basePath
+    ),
     createGetDocumentStalenessRoute(stalenessConfig, access, basePath),
     createDismissStalenessRoute(stalenessConfig, access, basePath),
   ];

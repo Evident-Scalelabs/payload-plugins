@@ -10,7 +10,7 @@ import type { GetCollectionStatusConfig } from "./model.js";
 // Route-contract test: pin path + method + access-guard wiring so the Phase 1
 // relocation of route registration stays behaviour-preserving. Handler logic
 // and the shared wrappers have their own unit tests.
-const config: GetCollectionStatusConfig = { availableCollections: new Set() };
+const config: GetCollectionStatusConfig = { availableCollections: new Set(), failedWindowMs: 3 };
 const denyAccess: AccessGuard = { check: vi.fn().mockReturnValue(false) };
 
 describe("createGetCollectionStatusRoute (contract)", () => {

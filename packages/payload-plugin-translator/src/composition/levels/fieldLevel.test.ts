@@ -3,6 +3,7 @@ import type { CollectionSlug, Field } from "payload";
 
 import type { CollectionSchemaMap } from "../../types/CollectionSchemaMap.js";
 
+import { resolveSettings } from "../../settings.js";
 import { fieldLevel } from "./fieldLevel.js";
 import type { LevelContext } from "../../server/modules/translation-levels/index.js";
 
@@ -11,15 +12,13 @@ import type { LevelContext } from "../../server/modules/translation-levels/index
 // contract test (route.test.ts), so we don't re-assert it here.
 const makeCtx = (): LevelContext => ({
   collections: [],
-  basePath: "/translate",
+  settings: resolveSettings({}),
   access: undefined,
   taskRunnerFactory: { create: vi.fn() },
   schemaMap: new Map([
     ["posts" as CollectionSlug, [{ name: "title", type: "text" }] as Field[]],
   ]) as CollectionSchemaMap,
   translationProvider: { translate: vi.fn() },
-  targetSelection: "single",
-  inlineMarks: false,
   addEndpoints: vi.fn(),
   addCollectionComponent: vi.fn(),
 });

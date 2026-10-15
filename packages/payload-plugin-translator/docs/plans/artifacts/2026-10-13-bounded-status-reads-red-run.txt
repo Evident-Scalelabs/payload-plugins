@@ -1,0 +1,54 @@
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/integration/translator/status-reads-are-bounded.int.test.ts > the status endpoints read only what they answer about > loads no job row belonging to another collection
+AssertionError: another collection's history is not this collection's panel to pay for: expected [ 'somewhere-else' ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "somewhere-else",
++ ]
+
+ ❯ src/integration/translator/status-reads-are-bounded.int.test.ts:129:7
+    127|       rowsRead().map(slugOf).filter((slug) => slug === "somewhere-else…
+    128|       "another collection's history is not this collection's panel to …
+    129|     ).toEqual([]);
+       |       ^
+    130|   });
+    131|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/integration/translator/status-reads-are-bounded.int.test.ts > the status endpoints read only what they answer about > loads only the asked document's rows, for rows written in the flat shape
+AssertionError: one document's panel does not read another document's runs: expected [ '4', '999', '1' ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "4",
++   "999",
++   "1",
++ ]
+
+ ❯ src/integration/translator/status-reads-are-bounded.int.test.ts:164:7
+    162|       flatRowsForOthers.map(documentOf),
+    163|       "one document's panel does not read another document's runs"
+    164|     ).toEqual([]);
+       |       ^
+    165|   });
+    166|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 passed (4)
+   Start at  10:48:17
+   Duration  2.36s (transform 428ms, setup 0ms, import 1.91s, tests 343ms, environment 0ms)
+
+error: script "test:integration" exited with code 1
+error: script "test:integration:sqlite" exited with code 1

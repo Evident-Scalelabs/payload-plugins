@@ -17,7 +17,7 @@ export function useDocTranslationApi(ctx: LevelContext): void {
         availableCollections: new Set(ctx.collections.map((collection) => collection.slug)),
       },
       access: ctx.access,
-      basePath: ctx.basePath,
+      settings: ctx.settings,
       provenanceServiceFactory: ctx.provenanceServiceFactory,
     })
   );

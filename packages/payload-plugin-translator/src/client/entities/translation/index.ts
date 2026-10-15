@@ -29,7 +29,8 @@ export type {
   DocumentTranslationRunning,
   CollectionTranslationStatus,
   CollectionTranslationStatusItem,
-  GroupedCollectionTranslationStatus,
+  CollectionTranslationPanel,
+  ReportedStatus,
   DocumentStaleness,
   StalenessLocale,
 } from "./model/types.js";
