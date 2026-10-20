@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { createResolveAbRewrite } from "../../src/middleware/resolveAbRewrite";
 import type { ResolveAbRewriteCookieConfig } from "../../src/middleware/types";
 
@@ -41,6 +41,34 @@ const rewriteTarget = (res: Response | null) =>
   new URL(res?.headers.get("x-middleware-rewrite") ?? "").pathname;
 
 describe("resolveAbRewrite", () => {
+  it("continues without a self rewrite when a fresh visitor is assigned the original", async () => {
+    const random = vi.spyOn(Math, "random").mockReturnValue(0.99);
+    try {
+      const resolver = createResolveAbRewrite<Variant>({
+        storage: {
+          read: async () => [{ ...variantB, passPercentage: 40 }],
+          write: async () => {},
+          clear: async () => {},
+        },
+        getBucket: (v) => v.bucket,
+        getPassPercentage: (v) => v.passPercentage,
+        getRewritePath: (v) => v.rewritePath,
+      });
+      const response = await resolver(
+        new NextRequest(`https://example.com${PAGE}`),
+        PAGE,
+        PAGE,
+        PAGE
+      );
+      expect(response?.headers.get("x-middleware-rewrite")).toBeNull();
+      expect(response?.headers.get("x-middleware-next")).toBe("1");
+      expect(response?.cookies.get(BUCKET_COOKIE)?.value).toBe("original");
+      expect(response?.cookies.get("ab_visitor_id")?.value).toBeTruthy();
+    } finally {
+      random.mockRestore();
+    }
+  });
+
   it("keeps the bucket cookie across browser sessions", async () => {
     const res = await resolve([variantB], "");
 
