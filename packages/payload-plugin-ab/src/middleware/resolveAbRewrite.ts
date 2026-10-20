@@ -74,7 +74,8 @@ export function createResolveAbRewrite<TVariantData extends object>(
     const match = variants.find((v) => getBucket(v) === bucket);
     const url = request.nextUrl.clone();
     url.pathname = match ? getRewritePath(match) : originalRewritePath;
-    const res = NextResponse.rewrite(url);
+    const res =
+      url.pathname === request.nextUrl.pathname ? NextResponse.next() : NextResponse.rewrite(url);
 
     if (existingBucket !== bucket) {
       res.cookies.set(bucketCookieName, bucket, {
