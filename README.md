@@ -1,3 +1,5 @@
+> Evident fork: start with [AGENTS.md](AGENTS.md) and the [Payload 4 compatibility guide](docs/EVIDENT_FORK.md). The upstream overview below does not describe the fork's tarball release path.
+
 # Payload CMS Plugins
 
 Open-source Payload CMS plugins for A/B testing, analytics, SEO, presets, comments, AI translation, and scheduled publishing. Drop one into an existing project, or start from **Ideal CMS** - the full starter at [`apps/cms`](./apps/cms), pre-wired on Payload 3 + Next.js 16 + Postgres.

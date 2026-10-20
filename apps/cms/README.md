@@ -1,6 +1,6 @@
-# Ideal CMS — Open-Source Payload CMS Starter with Next.js 15
+# Ideal CMS — Open-Source Payload CMS Starter with Next.js 16
 
-Production-ready, open-source headless CMS built on [Payload CMS 3](https://payloadcms.com/) and [Next.js 15](https://nextjs.org/) — bundling the [FocusReactive Payload plugins](https://github.com/focusreactive/payload-plugins) and a modular block-based page builder so you can ship marketing sites, blogs, and product platforms in a day.
+Production-ready, open-source headless CMS built on [Payload CMS 3](https://payloadcms.com/) and [Next.js 16](https://nextjs.org/) — bundling the [FocusReactive Payload plugins](https://github.com/focusreactive/payload-plugins) and a modular block-based page builder so you can ship marketing sites, blogs, and product platforms in a day.
 
 **Features:**
 
@@ -18,7 +18,7 @@ Production-ready, open-source headless CMS built on [Payload CMS 3](https://payl
 
 1. Create a new repository from this template and clone it locally.
 2. Provision a database — we recommend [Neon](https://console.neon.tech/app) for free, branchable Postgres.
-3. Run [Claude Code](https://www.anthropic.com/claude-code) and paste [this setup prompt](./setup_payload_prompt.md) — the agent will configure environment variables, run migrations, and seed sample content.
+3. Follow [Getting Started](#getting-started) and the root [agent guide](../../CLAUDE.md). The older setup-prompt file is not included in this repository.
 
 Prefer manual setup? Jump to [Getting Started](#getting-started).
 
@@ -35,7 +35,7 @@ Every plugin works independently in any Payload project. For new projects, we re
 | Layer                | Technology                                                                                 |
 | -------------------- | ------------------------------------------------------------------------------------------ |
 | CMS                  | [Payload CMS 3](https://payloadcms.com/)                                                   |
-| Framework            | [Next.js 15+](https://nextjs.org/) (App Router) + React 19                                 |
+| Framework            | [Next.js 16+](https://nextjs.org/) (App Router) + React 19                                 |
 | Database             | PostgreSQL · MongoDB · Supabase                                                            |
 | Styling              | [Tailwind CSS](https://tailwindcss.com/)                                                   |
 | Rich Text            | Lexical Editor                                                                             |
@@ -112,14 +112,15 @@ Want to influence the roadmap? Open an issue on [`focusreactive/payload-plugins`
 
 ### Prerequisites
 
-- Node.js `^18.20.2` or `>=20.9.0`
-- pnpm `^9` or `^10`
+- A Node runtime supported by the installed Next.js version; the fork compatibility trials use Node 24.15+
+- Bun at the root `package.json` package-manager version
 - A PostgreSQL instance ([Neon](https://neon.tech/) recommended for serverless deployments)
 
 ### 1. Install dependencies
 
 ```bash
-pnpm install
+# From the repository root
+bun install
 ```
 
 ### 2. Configure environment variables
@@ -149,13 +150,15 @@ cp .env.example .env
 ### 3. Run database migrations
 
 ```bash
-pnpm payload migrate
+# From apps/cms, against your disposable development database
+bun run migrate
 ```
 
 ### 4. Start the dev server
 
 ```bash
-pnpm dev
+# From apps/cms
+bun run dev
 ```
 
 ### 5. Open the admin

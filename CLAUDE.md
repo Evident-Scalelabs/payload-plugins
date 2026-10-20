@@ -1,5 +1,11 @@
 # payload-plugins — Agent Guide
 
+## Evident fork first
+
+This checkout's `origin` is `Evident-Scalelabs/payload-plugins`; `upstream` is `focusreactive/payload-plugins`. Start with [the fork guide](docs/EVIDENT_FORK.md). Existing Payload 4 SEO/A/B adaptations use their package `PAYLOAD4.md` and `pack-payload4.mjs`, producing immutable built tarballs for site consumers. The workspace itself stays on the upstream Payload 3 stack. Keep client schemas and Wayfinder decisioning outside the fork.
+
+The upstream npm/semantic-release instructions below are retained for that release path; routine Evident compatibility work does not publish the upstream namespace or push directly to main. No npm release is part of a documentation alignment.
+
 ## Stack
 
 - **Package manager**: bun
@@ -53,8 +59,7 @@ Rules:
 - Never commit a real file under `.claude/skills` or `.claude/agents`. Add the
   content under `.agents/`, then symlink it into `.claude/` with a **relative**
   path so it resolves on every machine and inside git worktrees.
-- Do **not** create per-package `.claude` / `.agents` dirs (e.g. under
-  `apps/cms`). Work from the repo root so root-level skills/agents apply.
+- Add new project guidance at the root. Existing upstream package-local skills remain upstream material; do not create another per-package config. Work from the repo root so the fork instructions apply.
 - `AGENTS.md` / `CLAUDE.md` instruction files are separate from this convention
   and live wherever they're relevant.
 
@@ -115,6 +120,6 @@ Releases are fully automated via **multi-semantic-release** + **semantic-release
 
 ## Gotchas
 
-- Git remote is `focusreactive/payload-plugins` (no hyphen). Package `repository.url` must match exactly or semantic-release will fail with a 128 git error.
+- Upstream npm release metadata refers to `focusreactive/payload-plugins` (no hyphen); the Evident fork has a separate origin. Do not rewrite package ownership metadata merely to match the fork remote.
 - `apps/dev` and internal packages (`ui`, `tailwind-config`, `typescript-config`) are skipped via `--ignore-private-packages`.
 - Do not manually bump versions in `package.json` — semantic-release owns version fields.

@@ -1,6 +1,6 @@
 ---
 name: cache-components
-description: Use when working in a Next.js project with `cacheComponents: true` in next.config — writing or reviewing React Server Components, adding `'use cache'`, configuring `cacheLife()`/`cacheTag()`, invalidating with `updateTag()`/`revalidateTag()`, debugging Partial Prerendering, or deciding static vs cached vs dynamic boundaries.
+description: "Use when working in a Next.js project with `cacheComponents: true` in next.config — writing or reviewing React Server Components, adding `'use cache'`, configuring `cacheLife()`/`cacheTag()`, invalidating with `updateTag()`/`revalidateTag()`, debugging Partial Prerendering, or deciding static vs cached vs dynamic boundaries."
 ---
 
 # Next.js Cache Components
