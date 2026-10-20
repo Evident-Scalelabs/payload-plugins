@@ -38,7 +38,7 @@ export async function buildAnalysisInput(args: BuildAnalysisInputArgs): Promise<
   const ir = await extractIntermediateRepresentation(args);
   const contentHtml = serialize(ir);
 
-  return buildInput({
+  const input = buildInput({
     values: args.values,
     contentHtml,
     locale: args.locale,
@@ -46,6 +46,9 @@ export async function buildAnalysisInput(args: BuildAnalysisInputArgs): Promise<
     fields: args.fields,
     site: args.site,
   });
+  if (!args.extractor?.resolveTitle) return input;
+  const title = args.extractor.resolveTitle(args.values);
+  return { ...input, title, has: { ...input.has, seoTitle: Boolean(title) } };
 }
 
 async function extractIntermediateRepresentation(

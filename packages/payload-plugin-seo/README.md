@@ -1,5 +1,7 @@
 # @focus-reactive/payload-plugin-seo
 
+> Evident fork: the [Payload 4 compatibility trial](PAYLOAD4.md) documents the small patch, tested versions and standalone release packaging.
+
 Live SEO analysis for [Payload CMS](https://payloadcms.com/) v3 + Next.js, powered by [Yoast](https://github.com/Yoast/wordpress-seo). Adds a real-time SEO drawer to the document editor — keyphrase optimization, on-page checks, readability, inclusive language, content vitals, and a Google SERP preview — without adding a single field to your database.
 
 The plugin injects a button into the editor toolbar of each configured collection. Clicking it opens a drawer that reads the current (unsaved) form values, derives the title, meta description, and slug from dot-path config, runs **your** registered content extractor to build the body content, and runs the Yoast analysis engine **entirely in the browser**. Nothing is persisted — there are zero new collections, globals, or fields.

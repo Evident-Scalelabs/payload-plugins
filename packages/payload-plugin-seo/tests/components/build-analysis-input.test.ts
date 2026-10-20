@@ -4,6 +4,23 @@ import type { ContentNode } from "../../src/content/schema/nodes";
 import type { ContentExtractor, ExtractToolkit } from "../../src/types/config";
 
 describe("buildAnalysisInput", () => {
+  it("uses the host's live document title without mutating its form values", async () => {
+    const extractor: ContentExtractor = () => [];
+    extractor.resolveTitle = (values) => `${values.headline} | Example site`;
+    const values = { title: "Old editor label", headline: "Unsaved homepage title" };
+    const out = await buildAnalysisInput({
+      values,
+      locale: "en",
+      payloadLocale: "en",
+      keyphrases: [],
+      fields: { seoTitle: "title" },
+      site: { name: "Example site", baseUrl: "https://example.test" },
+      extractor,
+    });
+    expect(out.title).toBe("Unsaved homepage title | Example site");
+    expect(out.has.seoTitle).toBe(true);
+    expect(values).toEqual({ title: "Old editor label", headline: "Unsaved homepage title" });
+  });
   it("returns empty content when no extractor is provided", async () => {
     const out = await buildAnalysisInput({
       values: { title: "T" },

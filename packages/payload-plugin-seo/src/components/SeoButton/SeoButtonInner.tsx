@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, useDocumentInfo, useLocale, useModal } from "@payloadcms/ui";
+import { useDocumentInfo, useLocale, useModal } from "@payloadcms/ui";
 import { Gauge } from "lucide-react";
 import { useCallback, useState } from "react";
 import { ScoreBadge } from "./ScoreBadge";
@@ -78,18 +78,15 @@ export function SeoButtonInner({
 
   return (
     <span className="relative inline-flex">
-      <Button
+      <button
         aria-label="SEO Analytics"
-        buttonStyle="none"
         className="frseo-doc-btn m-0 w-[calc(var(--base)*1.6)] h-[calc(var(--base)*1.6)] inline-flex items-center justify-center border border-[var(--theme-elevation-100)] rounded-rs bg-transparent text-neutral-800 transition-[border-color,background-color] duration-100 hover:border-neutral-300 hover:bg-neutral-100"
-        extraButtonProps={{ title: undefined }}
-        icon={<Gauge />}
-        iconStyle="without-border"
-        margin={false}
         onClick={open}
-        size="small"
-        tooltip="SEO Analytics"
-      />
+        title="SEO Analytics"
+        type="button"
+      >
+        <Gauge aria-hidden="true" />
+      </button>
       {overall && <ScoreBadge score={overall.seoScore} status={overall.status} />}
 
       <SeoDrawer
