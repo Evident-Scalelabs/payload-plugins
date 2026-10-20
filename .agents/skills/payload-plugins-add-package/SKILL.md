@@ -5,6 +5,10 @@ description: Use when adding or publishing a new plugin package in this monorepo
 
 # Add a New Plugin Package (payload-plugins)
 
+## Choose the release owner
+
+In the Evident fork, existing SEO/A/B compatibility work follows [the fork guide](../../../docs/EVIDENT_FORK.md) and its package `PAYLOAD4.md`; it stages an immutable tarball without npm publication. The recipe below applies only to an explicitly requested upstream npm-package release with the correct repository/package authority. Keep task work on a current-main branch with a PR; do not use a release-triggering push for ordinary compatibility or documentation work.
+
 ## How it works
 
 semantic-release decides what version to publish by finding the last git tag for the package. For new packages, you publish `1.0.0` manually once, then create the matching git tag — this anchors semantic-release's history. After that, all future releases are fully automated by CI.
