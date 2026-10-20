@@ -74,7 +74,10 @@ export function injectAdminFields<TVariantData extends object>(
       position: "sidebar",
       condition: (data: Record<string, unknown>) => !isVariant(data),
       components: {
-        Field: VARIANTS_FIELD_PATH,
+        Field: {
+          path: VARIANTS_FIELD_PATH,
+          clientProps: { collectionSlug, slugField, titleField: abConfig.nameField ?? "title" },
+        },
       },
     },
   };

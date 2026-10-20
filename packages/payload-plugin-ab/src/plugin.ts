@@ -75,7 +75,7 @@ export const abTestingPlugin =
         {
           path: "/_ab/duplicate",
           method: "post",
-          handler: duplicateVariantHandler,
+          handler: (req) => duplicateVariantHandler(req, collections),
         },
       ],
     };

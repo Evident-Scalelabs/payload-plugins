@@ -1,4 +1,5 @@
-import type { CollectionSlug, PayloadHandler } from "payload";
+import { APIError, type CollectionSlug, type PayloadRequest } from "payload";
+import type { CollectionABConfig } from "../types/config";
 import { AB_PASS_PERCENTAGE_FIELD, AB_VARIANT_OF_FIELD, DEFAULT_SLUG_FIELD } from "../constants";
 
 // 6-char alphanumeric hash — no external dep needed
@@ -6,7 +7,11 @@ function nanoid(): string {
   return Math.random().toString(36).slice(2, 8);
 }
 
-export const duplicateVariantHandler: PayloadHandler = async (req) => {
+export const duplicateVariantHandler = async (
+  req: PayloadRequest,
+  collections: Record<string, Pick<CollectionABConfig, "slugField">>
+) => {
+  if (!req.user) return Response.json({ error: "Authentication required" }, { status: 401 });
   if (!req.payload) {
     return Response.json({ error: "Payload not available" }, { status: 500 });
   }
@@ -21,11 +26,18 @@ export const duplicateVariantHandler: PayloadHandler = async (req) => {
     return Response.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const { collectionSlug, docId, slugField = DEFAULT_SLUG_FIELD } = body;
+  const { collectionSlug, docId } = body;
 
   if (!collectionSlug || !docId) {
     return Response.json({ error: "collectionSlug and docId are required" }, { status: 400 });
   }
+  if (!Object.hasOwn(collections, collectionSlug)) {
+    return Response.json(
+      { error: "Collection is not configured for A/B testing" },
+      { status: 403 }
+    );
+  }
+  const slugField = collections[collectionSlug]!.slugField ?? DEFAULT_SLUG_FIELD;
 
   let parentDoc: Record<string, unknown>;
   try {
@@ -51,11 +63,13 @@ export const duplicateVariantHandler: PayloadHandler = async (req) => {
       collection: collectionSlug as CollectionSlug,
       id: docId,
       data: {
+        _status: "draft",
         [slugField]: `${originalSlug}--${nanoid()}`,
         [AB_VARIANT_OF_FIELD]: docId,
         [AB_PASS_PERCENTAGE_FIELD]: 1,
       },
-      overrideAccess: true,
+      draft: true,
+      overrideAccess: false,
       req,
     })) as Record<string, unknown>;
 
@@ -65,6 +79,9 @@ export const duplicateVariantHandler: PayloadHandler = async (req) => {
     );
   } catch (err) {
     const message = err instanceof Error ? err.message : "Failed to create variant";
-    return Response.json({ error: message }, { status: 500 });
+    return Response.json(
+      { error: message },
+      { status: err instanceof APIError ? err.status : 500 }
+    );
   }
 };
