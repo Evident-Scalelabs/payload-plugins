@@ -47,7 +47,7 @@ export function buildInput({
 
   return {
     title,
-    slug: valueAt(values, fields.slug ?? "slug"),
+    slug: valueAt(values, fields.slug ?? "slug").replace(/^\/+/, ""),
     description: valueAt(values, fields.metaDescription),
     contentHtml,
     keyphrase: keyphrases[0]?.text ?? "",
