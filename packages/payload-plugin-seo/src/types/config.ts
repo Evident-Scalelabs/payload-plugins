@@ -10,11 +10,15 @@ export interface ExtractContext {
 }
 
 /** Developer-authored extractor: raw form values + runtime ctx + injected toolkit → content schema (Intermediate Representation). */
-export type ContentExtractor = (
-  values: Record<string, unknown>,
-  ctx: ExtractContext,
-  toolkit: ExtractToolkit
-) => ContentNode[] | Promise<ContentNode[]>;
+export type ContentExtractor = {
+  (
+    values: Record<string, unknown>,
+    ctx: ExtractContext,
+    toolkit: ExtractToolkit
+  ): ContentNode[] | Promise<ContentNode[]>;
+  /** Optional rendered document title, resolved from the current unsaved form. */
+  resolveTitle?: (values: Record<string, unknown>) => string;
+};
 
 export interface SeoFieldPaths {
   /** Dot-path to the SEO title. Falls back to `title` if absent. */

@@ -21,7 +21,7 @@ cpSync(source, stage, {
 cpSync(fileURLToPath(new URL("../../../LICENSE", import.meta.url)), join(stage, "LICENSE"));
 const manifestPath = join(stage, "package.json");
 const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
-manifest.version += "-evident.payload4.1";
+manifest.version += "-evident.payload4.2";
 Object.assign(manifest.devDependencies, {
   "@payloadcms/next": "4.0.0-beta.2",
   "@payloadcms/richtext-lexical": "4.0.0-beta.2",
