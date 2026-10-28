@@ -4,9 +4,9 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const [major, minor] = process.versions.node.split(".").map(Number);
-if (major !== 24 || minor < 15) {
-  throw new Error("Use Cedar Node 24.15+ to build this compatibility package.");
+const [major, minor, patch] = process.versions.node.split(".").map(Number);
+if (major !== 24 || minor < 22 || (minor === 22 && patch < 1)) {
+  throw new Error("Use Cedar Node 24.22.1+ to build this compatibility package.");
 }
 
 // Build only A/B: the upstream workspace continues to test its other plugins on v3.
@@ -21,10 +21,10 @@ cpSync(source, stage, {
 cpSync(fileURLToPath(new URL("../../../LICENSE", import.meta.url)), join(stage, "LICENSE"));
 const manifestPath = join(stage, "package.json");
 const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
-manifest.version += "-evident.payload4.1";
+manifest.version += "-evident.payload4.2";
 Object.assign(manifest.devDependencies, {
-  "@payloadcms/ui": "4.0.0-beta.2",
-  payload: "4.0.0-beta.2",
+  "@payloadcms/ui": "4.0.0-beta.5",
+  payload: "4.0.0-beta.5",
   next: "16.4.0",
   react: "19.3.0",
   "react-dom": "19.3.0",
