@@ -70,12 +70,12 @@
     "test:watch": "vitest"
   },
   "peerDependencies": {
-    "@payloadcms/next": "^3.0.0 || 4.0.0-beta.2",
-    "@payloadcms/richtext-lexical": "^3.0.0 || 4.0.0-beta.2",
-    "@payloadcms/ui": "^3.0.0 || 4.0.0-beta.2",
+    "@payloadcms/next": "^3.0.0 || 4.0.0-beta.2 || 4.0.0-beta.5",
+    "@payloadcms/richtext-lexical": "^3.0.0 || 4.0.0-beta.2 || 4.0.0-beta.5",
+    "@payloadcms/ui": "^3.0.0 || 4.0.0-beta.2 || 4.0.0-beta.5",
     "lucide-react": "^0.469.0 || ^1.0.0",
     "next": "^14.0.0 || ^15.0.0 || ^16.0.0",
-    "payload": "^3.0.0 || 4.0.0-beta.2",
+    "payload": "^3.0.0 || 4.0.0-beta.2 || 4.0.0-beta.5",
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0"
   },
