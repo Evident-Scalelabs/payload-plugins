@@ -298,21 +298,23 @@ createTranslationProvider({
 
 ### OpenAI and OpenAI-compatible gateways
 
-`openAIComplete` works with any client exposing a Chat Completions `chat.completions.create` — the OpenAI SDK, Azure OpenAI, OpenRouter, a corporate proxy. You construct the client, so the SDK version is yours to choose.
+`openAIComplete` works with any client exposing a Chat Completions `chat.completions.create` — the OpenAI SDK, Azure OpenAI, Vercel AI Gateway, a corporate proxy. You construct the client, so the SDK version is yours to choose.
 
 ```ts
 createTranslationProvider({
   complete: openAIComplete({
     client: new OpenAI({
-      apiKey: process.env.OPENROUTER_API_KEY,
-      baseURL: 'https://openrouter.ai/api/v1',
+      apiKey: process.env.AI_GATEWAY_API_KEY,
+      baseURL: 'https://ai-gateway.vercel.sh/v1',
     }),
-    model: 'anthropic/claude-sonnet-4.5',
+    model: process.env.AI_GATEWAY_TRANSLATION_MODEL!,
     sampling: { temperature: 0 },
     structuredOutput: 'json_object',
   }),
 })
 ```
+
+For this [AI Gateway example](https://vercel.com/docs/ai-gateway/sdks-and-apis/openai-chat-completions), supply `AI_GATEWAY_API_KEY` and choose `AI_GATEWAY_TRANSLATION_MODEL` from the current [model catalog](https://ai-gateway.vercel.sh/v1/models). The selected model must support Chat Completions, the requested JSON mode and any sampling options. This example does not change the supplied-client contract or require Gateway for other integrations. Credentials, model compatibility and live translation acceptance belong to the consuming application.
 
 `structuredOutput` picks how the reply is asked for:
 
