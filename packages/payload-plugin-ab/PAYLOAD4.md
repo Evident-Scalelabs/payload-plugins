@@ -1,6 +1,6 @@
 # Evident Payload 4 A/B compatibility trial
 
-Based on FocusReactive `b645ef0c849e8390f0b0bca91885580e1fc6a36c`, in the same fork as the accepted SEO port. This package is tested on Payload/UI **4.0.0-beta.2**, Next **16.4.0**, React **19.3.0**, Node **24.15.0**. Beta.5 is also admitted after the verification below; other betas require another test.
+Based on FocusReactive `b645ef0c849e8390f0b0bca91885580e1fc6a36c`, in the same fork as the accepted SEO port. This package is tested on Payload/UI **4.0.0-beta.2**, Next **16.4.0**, React **19.3.0**, Node **24.15.0**. Beta.5 and beta.6 are also admitted after the verification below; other betas require another test.
 
 ## Maintained delta
 
@@ -20,7 +20,7 @@ With the actual Node 24.22.1+ executable and Bun on PATH:
 node packages/payload-plugin-ab/scripts/pack-payload4.mjs /absolute/output/directory
 ```
 
-The helper stages only A/B, includes the upstream license, pins the tested host dependencies, builds JS/declarations and packs `2.10.1-evident.payload4.2`. Its suffix changes only the staged manifest; upstream source versions stay semantic-release-owned. It does not publish to npm or run the monorepo release workflow.
+The helper stages only A/B, includes the upstream license, pins the tested host dependencies, builds JS/declarations and packs `2.10.1-evident.payload4.3`. Its suffix changes only the staged manifest; upstream source versions stay semantic-release-owned. It does not publish to npm or run the monorepo release workflow.
 
 Stock v3 and unmodified v4 both build and pass **48/48 tests**. The five new public-plugin/middleware regression checks first fail on stock source, then the patched v3 and v4 builds both pass **53/53**. No tests are deleted or relaxed. The workspace lock validates in frozen mode. Cedar's real editor/renderer, native migrations and browser assignment acceptance are recorded separately in its A/B trial document; a package build alone is insufficient.
 
@@ -33,3 +33,9 @@ Fetch `upstream/main` and review the four small source changes above when mergin
 Payload and all build-time `@payloadcms/*` packages are pinned to **4.0.0-beta.5** with Node **24.22.1**, Next **16.4.0** and React **19.3.0**. The published peer ranges retain beta.2 and additionally admit only beta.5. The workspace development stack remains on Payload 3.
 
 JavaScript and declarations build successfully; all **53/53** tests pass. The frozen workspace lock validates. The new immutable artifact is `2.10.1-evident.payload4.2`; consumer editor, API and renderer acceptance belongs to each site upgrade.
+
+## Beta.6 compatibility — 2026-11-04
+
+Payload and all staged build-time `@payloadcms/*` packages are pinned to **4.0.0-beta.6**, with Node **24.22.1**, Bun **1.3.9**, Next **16.4.0** and React **19.3.0**. Peer ranges additionally admit only beta.6 while retaining v3, beta.2 and beta.5. The upstream workspace remains on Payload 3. This release changes compatibility/build metadata only; the plugin runtime is unchanged.
+
+JavaScript and declarations build successfully; native beta.6 tests pass **53/53**, matching a fresh beta.5 rebuild/test. The frozen upstream workspace lock validates with no package-resolution changes. The new immutable artifact is `2.10.1-evident.payload4.3`; each site's real editor, API and renderer acceptance remains a consumer responsibility.
