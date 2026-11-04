@@ -2,7 +2,7 @@
 
 Based on FocusReactive `main` at `b645ef0c84` (19 October 2026). This fork evaluates **SEO only** for Cedar Valley. Other packages retain their upstream configuration and are not certified for Payload 4.
 
-The tested host is Payload / `@payloadcms/*` **4.0.0-beta.2**, Next **16.4.0**, React **19.3.0**, Lucide **1.56.0**, Node **24.15.0**. The peer range admits this exact Payload beta; beta.5 is also admitted after the verification below; other betas need their own test.
+The tested host is Payload / `@payloadcms/*` **4.0.0-beta.2**, Next **16.4.0**, React **19.3.0**, Lucide **1.56.0**, Node **24.15.0**. The peer range admits this exact Payload beta; beta.5 and beta.6 are also admitted after the verification below; other betas need their own test.
 
 ## Maintained changes
 
@@ -21,7 +21,7 @@ From the repository root, using the actual Node 24.22.1+ executable and Bun:
 node packages/payload-plugin-seo/scripts/pack-payload4.mjs /absolute/output/directory
 ```
 
-The helper stages only SEO in a temporary directory, pins its build dependencies to the tested host, includes the upstream license, builds JavaScript/CSS/declarations and packs `1.10.1-evident.payload4.3`. It prints the staging directory so `bun run test` can run there. The suffix is applied only to the staged package; upstream source versions remain semantic-release-owned. It does not publish to npm or run the monorepo release workflow.
+The helper stages only SEO in a temporary directory, pins its build dependencies to the tested host, includes the upstream license, builds JavaScript/CSS/declarations and packs `1.10.1-evident.payload4.4`. It prints the staging directory so `bun run test` can run there. The suffix is applied only to the staged package; upstream source versions remain semantic-release-owned. It does not publish to npm or run the monorepo release workflow.
 
 Publish the resulting tarball as an experimental GitHub release on the Evident fork, tagged at the exact source commit. Cedar pins the release asset URL; its npm lockfile records the tarball integrity. A raw GitHub dependency points at the monorepo root and does not provide this built subpackage.
 
@@ -41,3 +41,9 @@ Keep `upstream` pointed at `https://github.com/focusreactive/payload-plugins.git
 Payload and all build-time `@payloadcms/*` packages are pinned to **4.0.0-beta.5** with Node **24.22.1**, Next **16.4.0** and React **19.3.0**. The published peer ranges retain beta.2 and additionally admit only beta.5. The workspace development stack remains on Payload 3.
 
 JavaScript, CSS and declarations build successfully. Tests pass **358/363** with the same five upstream failures listed above; no test was changed or relaxed. The frozen workspace lock validates. The new immutable artifact is `1.10.1-evident.payload4.3`; consumer editor, API and renderer acceptance belongs to each site upgrade.
+
+## Beta.6 compatibility — 2026-11-04
+
+Payload and all staged build-time `@payloadcms/*` packages are pinned to **4.0.0-beta.6**, with Node **24.22.1**, Bun **1.3.9**, Next **16.4.0** and React **19.3.0**. Peer ranges additionally admit only beta.6 while retaining v3, beta.2 and beta.5. The upstream workspace remains on Payload 3. This release changes compatibility/build metadata only; the plugin runtime is unchanged.
+
+JavaScript, isolated CSS and declarations build successfully. Native beta.6 tests pass **358/363** with the same five existing failures listed above; a fresh beta.5 rebuild/test reproduces the identical five failures and counts. The frozen upstream workspace lock validates with no package-resolution changes. The new immutable artifact is `1.10.1-evident.payload4.4`; each site's real editor, API and renderer acceptance remains a consumer responsibility.

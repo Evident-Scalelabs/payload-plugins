@@ -21,10 +21,10 @@ cpSync(source, stage, {
 cpSync(fileURLToPath(new URL("../../../LICENSE", import.meta.url)), join(stage, "LICENSE"));
 const manifestPath = join(stage, "package.json");
 const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
-manifest.version += "-evident.payload4.2";
+manifest.version += "-evident.payload4.3";
 Object.assign(manifest.devDependencies, {
-  "@payloadcms/ui": "4.0.0-beta.5",
-  payload: "4.0.0-beta.5",
+  "@payloadcms/ui": "4.0.0-beta.6",
+  payload: "4.0.0-beta.6",
   next: "16.4.0",
   react: "19.3.0",
   "react-dom": "19.3.0",
