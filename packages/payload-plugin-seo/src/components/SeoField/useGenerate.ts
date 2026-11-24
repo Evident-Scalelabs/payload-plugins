@@ -1,7 +1,6 @@
 "use client";
 
 import { useAllFormFields, useConfig, useDocumentInfo, useLocale } from "@payloadcms/ui";
-import { reduceFieldsToValues } from "payload/shared";
 import { useCallback, useRef, useState } from "react";
 import { getSeoClientConfig } from "../../client-config/registry";
 import { GENERATE_ENDPOINT_PATH } from "../../constants/generation";
@@ -18,6 +17,7 @@ import {
   video,
 } from "../../content/schema/helpers";
 import { serialize } from "../../content/schema/serialize";
+import { formStateToValues } from "../../utils/form-state-values";
 import type { ContentHelpers } from "../../types/config";
 import type { Measurement } from "../../measure/measure";
 import type { SeoFieldKind } from "../../server/generate/prompts";
@@ -81,7 +81,7 @@ export function useGenerate({ kind, measurement, setValue }: UseGenerateProps) {
     setError(null);
 
     try {
-      const values = reduceFieldsToValues(ff, true) as Record<string, unknown>;
+      const values = formStateToValues(ff, true);
       const localeCode = loc?.code;
       const ir = await extractor(
         values,
