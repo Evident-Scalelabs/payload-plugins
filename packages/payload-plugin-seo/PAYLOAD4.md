@@ -2,7 +2,7 @@
 
 Based on FocusReactive `main` at `b645ef0c84` (19 October 2026). This fork evaluates **SEO only** for Cedar Valley. Other packages retain their upstream configuration and are not certified for Payload 4.
 
-The tested host is Payload / `@payloadcms/*` **4.0.0-beta.2**, Next **16.4.0**, React **19.3.0**, Lucide **1.56.0**, Node **24.15.0**. The peer range admits this exact Payload beta; beta.5 and beta.6 are also admitted after the verification below; other betas need their own test.
+The tested host is Payload / `@payloadcms/*` **4.0.0-beta.2**, Next **16.4.0**, React **19.3.0**, Lucide **1.56.0**, Node **24.15.0**. The peer range admits this exact Payload beta; beta.5, beta.6 and beta.11 are also admitted after the verification below; other betas need their own test.
 
 ## Maintained changes
 
@@ -15,13 +15,13 @@ The analysis engine, scoring rules, collections, endpoints and publication behav
 
 ## Build a pinned package
 
-From the repository root, using the actual Node 24.22.1+ executable and Bun:
+From the repository root, using the actual Node 24.22.3+ executable and Bun:
 
 ```sh
 node packages/payload-plugin-seo/scripts/pack-payload4.mjs /absolute/output/directory
 ```
 
-The helper stages only SEO in a temporary directory, pins its build dependencies to the tested host, includes the upstream license, builds JavaScript/CSS/declarations and packs `1.10.1-evident.payload4.4`. It prints the staging directory so `bun run test` can run there. The suffix is applied only to the staged package; upstream source versions remain semantic-release-owned. It does not publish to npm or run the monorepo release workflow.
+The helper stages only SEO in a temporary directory, pins its build dependencies to the tested host, includes the upstream license, builds JavaScript/CSS/declarations and packs `1.10.1-evident.payload4.5`. It prints the staging directory so `bun run test` can run there. The suffix is applied only to the staged package; upstream source versions remain semantic-release-owned. It does not publish to npm or run the monorepo release workflow.
 
 Publish the resulting tarball as an experimental GitHub release on the Evident fork, tagged at the exact source commit. Cedar pins the release asset URL; its npm lockfile records the tarball integrity. A raw GitHub dependency points at the monorepo root and does not provide this built subpackage.
 
@@ -47,3 +47,11 @@ JavaScript, CSS and declarations build successfully. Tests pass **358/363** with
 Payload and all staged build-time `@payloadcms/*` packages are pinned to **4.0.0-beta.6**, with Node **24.22.1**, Bun **1.3.9**, Next **16.4.0** and React **19.3.0**. Peer ranges additionally admit only beta.6 while retaining v3, beta.2 and beta.5. The upstream workspace remains on Payload 3. This release changes compatibility/build metadata only; the plugin runtime is unchanged.
 
 JavaScript, isolated CSS and declarations build successfully. Native beta.6 tests pass **358/363** with the same five existing failures listed above; a fresh beta.5 rebuild/test reproduces the identical five failures and counts. The frozen upstream workspace lock validates with no package-resolution changes. The new immutable artifact is `1.10.1-evident.payload4.4`; each site's real editor, API and renderer acceptance remains a consumer responsibility.
+
+## Beta.11 compatibility — 2026-11-23
+
+Payload and all staged build-time `@payloadcms/*` packages are pinned to **4.0.0-beta.11**, with Node **24.22.3**, Bun **1.2.21**, Next **16.4.6** and React **19.3.1**, the minimums beta.11 declares. Peer ranges additionally admit beta.11 while retaining v3, beta.2, beta.5 and beta.6.
+
+Beta.8 renamed `reduceFieldsToValues` to `getDataFromFormState` ([payloadcms/payload#19425](https://github.com/payloadcms/payload/pull/19425)). `src/utils/form-state-values.ts` picks whichever name the installed Payload exports, so one source still builds against the workspace's Payload 3 and against beta.11. The two unsaved-document readers (`useLiveDocument`, `useGenerate`) use it; arguments and results are unchanged.
+
+JavaScript, isolated CSS and declarations build successfully. Native beta.11 tests pass **358/363** with the same five existing failures listed above. The new immutable artifact is `1.10.1-evident.payload4.5`. Cedar's `verify:seo` passed against it: unsaved title preview, all six tabs, no page writes, and modal focus at 1440/390/320px.

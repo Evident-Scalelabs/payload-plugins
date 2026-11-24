@@ -1,11 +1,11 @@
 "use client";
 
 import { useAllFormFields, useConfig, useDebounce, useLocale } from "@payloadcms/ui";
-import { reduceFieldsToValues } from "payload/shared";
 import { useCallback, useMemo, useRef } from "react";
 import { resolveContentExtractor } from "../../content/registry";
 import type { AnalysisInput, KeyphraseInput } from "../../engine/types/analysis";
 import type { SeoFieldPaths } from "../../types/config";
+import { formStateToValues } from "../../utils/form-state-values";
 import { buildAnalysisInput } from "./build-analysis-input";
 
 const erroredPaths = new Set<string>();
@@ -46,7 +46,7 @@ export function useLiveDocument({
   const apiRoute = config.routes.api;
 
   const values = useMemo<Record<string, unknown>>(
-    () => (enabled ? (reduceFieldsToValues(debouncedFields, true) as Record<string, unknown>) : {}),
+    () => (enabled ? formStateToValues(debouncedFields, true) : {}),
     [enabled, debouncedFields]
   );
 
@@ -87,7 +87,7 @@ export function useLiveDocument({
     async ({ live = false }: { live?: boolean } = {}): Promise<AnalysisInput> => {
       const s = liveRef.current;
       const inputValues = live
-        ? (reduceFieldsToValues(s.formFields, true) as Record<string, unknown>)
+        ? formStateToValues(s.formFields, true)
         : s.values;
 
       const extractor = resolveContentExtractor(s.extractContentPath);

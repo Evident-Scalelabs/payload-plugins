@@ -5,8 +5,8 @@ import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const [major, minor, patch] = process.versions.node.split(".").map(Number);
-if (major !== 24 || minor < 22 || (minor === 22 && patch < 1)) {
-  throw new Error("Use Cedar Node 24.22.1+ to build this compatibility package.");
+if (major !== 24 || minor < 22 || (minor === 22 && patch < 3)) {
+  throw new Error("Use Cedar Node 24.22.3+ to build this compatibility package.");
 }
 
 // Build only SEO: the upstream workspace continues to test its other plugins on v3.
@@ -21,15 +21,15 @@ cpSync(source, stage, {
 cpSync(fileURLToPath(new URL("../../../LICENSE", import.meta.url)), join(stage, "LICENSE"));
 const manifestPath = join(stage, "package.json");
 const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
-manifest.version += "-evident.payload4.4";
+manifest.version += "-evident.payload4.5";
 Object.assign(manifest.devDependencies, {
-  "@payloadcms/next": "4.0.0-beta.6",
-  "@payloadcms/richtext-lexical": "4.0.0-beta.6",
-  "@payloadcms/ui": "4.0.0-beta.6",
-  payload: "4.0.0-beta.6",
-  next: "16.4.0",
-  react: "19.3.0",
-  "react-dom": "19.3.0",
+  "@payloadcms/next": "4.0.0-beta.11",
+  "@payloadcms/richtext-lexical": "4.0.0-beta.11",
+  "@payloadcms/ui": "4.0.0-beta.11",
+  payload: "4.0.0-beta.11",
+  next: "16.4.6",
+  react: "19.3.1",
+  "react-dom": "19.3.1",
   "@types/react": "19.3.0",
   "@types/react-dom": "19.3.0",
   "lucide-react": "1.56.0",
